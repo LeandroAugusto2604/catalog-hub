@@ -4,7 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Trash2, Minus, Plus, ShoppingBag } from "lucide-react";
+import { Trash2, Minus, Plus, ShoppingBag, MessageCircle } from "lucide-react";
+
+const STORE_WHATSAPP = "551193760073";
 import { useCart, formatBRL } from "@/lib/cart";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -197,8 +199,29 @@ export function CartSheet({ open, onOpenChange }: Props) {
                 onChange={(e) => setForm({ ...form, notes: e.target.value })}
               />
             </div>
-            <Button type="submit" disabled={submitting} className="w-full btn-glow border-0">
-              {submitting ? "Enviando..." : "Enviar Orçamento"}
+    <Button type="submit" disabled={submitting} className="w-full btn-glow border-0">
+              {submitting ? "Enviando..." : "Enviar Orçamento por E-mail"}
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full bg-[#25D366] hover:bg-[#1faa54] text-white border-0"
+              onClick={() => {
+                const parsed = formSchema.safeParse(form);
+                const lines = items.map(
+                  (i) => `• ${i.name} — ${i.quantity}x ${formatBRL(i.price)} = ${formatBRL(i.price * i.quantity)}`
+                );
+                const header = `Olá! Gostaria de solicitar um orçamento:`;
+                const customer = parsed.success
+                  ? `\n\n*Cliente:* ${parsed.data.customer_name}\n*WhatsApp:* ${parsed.data.whatsapp}\n*E-mail:* ${parsed.data.email}${parsed.data.notes ? `\n*Obs:* ${parsed.data.notes}` : ""}`
+                  : "";
+                const body = `\n\n${lines.join("\n")}\n\n*Total estimado:* ${formatBRL(total)}${customer}`;
+                const text = encodeURIComponent(header + body);
+                window.open(`https://wa.me/${STORE_WHATSAPP}?text=${text}`, "_blank");
+              }}
+            >
+              <MessageCircle className="h-4 w-4 mr-2" />
+              Enviar pelo WhatsApp
             </Button>
           </form>
         )}
