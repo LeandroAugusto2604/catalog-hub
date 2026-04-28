@@ -49,7 +49,7 @@ function Index() {
         supabase.from("categories").select("*").order("name"),
         supabase
           .from("products")
-          .select("id,name,description,price,image_url,category_id")
+          .select("id,name,description,price,image_url,image_urls,category_id")
           .eq("active", true)
           .order("created_at", { ascending: false }),
       ]);
