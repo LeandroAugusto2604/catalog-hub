@@ -15,7 +15,19 @@ import nodemailer from "nodemailer";
 import { z } from "zod";
 
 const bodySchema = z.object({
-  quote_id: z.string().uuid(),
+  customer_name: z.string().trim().min(1).max(200),
+  whatsapp: z.string().trim().min(5).max(40),
+  email: z.string().trim().email().max(320),
+  notes: z.string().max(1000).nullable().optional(),
+  total: z.coerce.number().min(0),
+  items: z.array(
+    z.object({
+      product_id: z.string().uuid().nullable().optional(),
+      product_name: z.string().trim().min(1).max(200),
+      unit_price: z.coerce.number().min(0),
+      quantity: z.coerce.number().int().min(1),
+    })
+  ).min(1),
 });
 
 const fmt = (n: number) =>
@@ -31,7 +43,7 @@ export const Route = createFileRoute("/api/send-quote-email")({
           if (!parsed.success) {
             return Response.json({ error: "quote_id inválido" }, { status: 400 });
           }
-          const { quote_id } = parsed.data;
+          const quote_id = crypto.randomUUID();
 
           const SUPABASE_URL = process.env.SUPABASE_URL;
           const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -43,6 +55,27 @@ export const Route = createFileRoute("/api/send-quote-email")({
           }
 
           const supabase = createClient(SUPABASE_URL, SERVICE_KEY);
+
+          const { error: insertQuoteError } = await supabase.from("quotes").insert({
+            id: quote_id,
+            customer_name: parsed.data.customer_name,
+            whatsapp: parsed.data.whatsapp,
+            email: parsed.data.email,
+            notes: parsed.data.notes ?? null,
+            total: parsed.data.total,
+          });
+          if (insertQuoteError) throw insertQuoteError;
+
+          const { error: insertItemsError } = await supabase.from("quote_items").insert(
+            parsed.data.items.map((item) => ({
+              quote_id,
+              product_id: item.product_id ?? null,
+              product_name: item.product_name,
+              unit_price: item.unit_price,
+              quantity: item.quantity,
+            }))
+          );
+          if (insertItemsError) throw insertItemsError;
 
           const { data: quote, error: qe } = await supabase
             .from("quotes")
