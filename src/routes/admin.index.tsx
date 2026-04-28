@@ -20,7 +20,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { Pencil, Plus, Trash2, Loader2, ImageIcon } from "lucide-react";
+import { Pencil, Plus, Trash2, Loader2, ImageIcon, X } from "lucide-react";
 import { toast } from "sonner";
 import { formatBRL } from "@/lib/cart";
 
@@ -28,12 +28,15 @@ export const Route = createFileRoute("/admin/")({
   component: ProductsAdmin,
 });
 
+const MAX_IMAGES = 5;
+
 interface Product {
   id: string;
   name: string;
   description: string | null;
   price: number;
   image_url: string | null;
+  image_urls: string[] | null;
   category_id: string | null;
   active: boolean;
 }
@@ -42,12 +45,22 @@ interface Category {
   name: string;
 }
 
-const empty = {
+interface EditingState {
+  id: string;
+  name: string;
+  description: string;
+  price: string;
+  image_urls: string[];
+  category_id: string;
+  active: boolean;
+}
+
+const empty: EditingState = {
   id: "",
   name: "",
   description: "",
   price: "",
-  image_url: "",
+  image_urls: [],
   category_id: "",
   active: true,
 };
@@ -57,11 +70,10 @@ function ProductsAdmin() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
-  const [editing, setEditing] = useState<typeof empty>(empty);
+  const [editing, setEditing] = useState<EditingState>(empty);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
 
-  // category mgmt
   const [newCat, setNewCat] = useState("");
 
   const load = async () => {
@@ -84,33 +96,50 @@ function ProductsAdmin() {
     setOpen(true);
   };
   const openEdit = (p: Product) => {
+    const urls = p.image_urls && p.image_urls.length > 0
+      ? p.image_urls
+      : p.image_url ? [p.image_url] : [];
     setEditing({
       id: p.id,
       name: p.name,
       description: p.description ?? "",
       price: String(p.price),
-      image_url: p.image_url ?? "",
+      image_urls: urls,
       category_id: p.category_id ?? "",
       active: p.active,
     });
     setOpen(true);
   };
 
-  const upload = async (file: File) => {
+  const uploadFiles = async (files: FileList) => {
+    const remaining = MAX_IMAGES - editing.image_urls.length;
+    if (remaining <= 0) {
+      toast.error(`Máximo de ${MAX_IMAGES} imagens`);
+      return;
+    }
+    const list = Array.from(files).slice(0, remaining);
     setUploading(true);
     try {
-      const ext = file.name.split(".").pop();
-      const path = `${crypto.randomUUID()}.${ext}`;
-      const { error } = await supabase.storage.from("products").upload(path, file);
-      if (error) throw error;
-      const { data } = supabase.storage.from("products").getPublicUrl(path);
-      setEditing((e) => ({ ...e, image_url: data.publicUrl }));
-      toast.success("Imagem enviada");
+      const uploaded: string[] = [];
+      for (const file of list) {
+        const ext = file.name.split(".").pop();
+        const path = `${crypto.randomUUID()}.${ext}`;
+        const { error } = await supabase.storage.from("product-images").upload(path, file);
+        if (error) throw error;
+        const { data } = supabase.storage.from("product-images").getPublicUrl(path);
+        uploaded.push(data.publicUrl);
+      }
+      setEditing((e) => ({ ...e, image_urls: [...e.image_urls, ...uploaded] }));
+      toast.success(`${uploaded.length} imagem(ns) enviada(s)`);
     } catch (err: any) {
       toast.error(err.message ?? "Falha no upload");
     } finally {
       setUploading(false);
     }
+  };
+
+  const removeImage = (idx: number) => {
+    setEditing((e) => ({ ...e, image_urls: e.image_urls.filter((_, i) => i !== idx) }));
   };
 
   const save = async () => {
@@ -124,7 +153,8 @@ function ProductsAdmin() {
         name: editing.name.trim(),
         description: editing.description || null,
         price: Number(editing.price),
-        image_url: editing.image_url || null,
+        image_url: editing.image_urls[0] ?? null,
+        image_urls: editing.image_urls,
         category_id: editing.category_id || null,
         active: editing.active,
       };
@@ -176,7 +206,7 @@ function ProductsAdmin() {
               <Plus className="h-4 w-4 mr-2" /> Novo produto
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-lg">
+          <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>{editing.id ? "Editar produto" : "Novo produto"}</DialogTitle>
             </DialogHeader>
@@ -226,30 +256,56 @@ function ProductsAdmin() {
                 </div>
               </div>
               <div className="space-y-1.5">
-                <Label>Imagem</Label>
-                <div className="flex items-center gap-3">
-                  <div className="h-20 w-20 rounded-lg bg-muted overflow-hidden flex items-center justify-center">
-                    {editing.image_url ? (
-                      <img src={editing.image_url} className="w-full h-full object-cover" />
-                    ) : (
-                      <ImageIcon className="h-6 w-6 text-muted-foreground" />
-                    )}
-                  </div>
-                  <label className="cursor-pointer">
-                    <input
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={(e) => {
-                        const f = e.target.files?.[0];
-                        if (f) upload(f);
-                      }}
-                    />
-                    <span className="inline-flex items-center px-3 py-2 rounded-md border border-border text-sm hover:bg-muted">
-                      {uploading ? "Enviando..." : "Enviar imagem"}
-                    </span>
-                  </label>
+                <Label>Imagens (até {MAX_IMAGES})</Label>
+                <div className="grid grid-cols-5 gap-2">
+                  {editing.image_urls.map((url, idx) => (
+                    <div
+                      key={url + idx}
+                      className="relative aspect-square rounded-lg bg-muted overflow-hidden group"
+                    >
+                      <img src={url} className="w-full h-full object-cover" />
+                      {idx === 0 && (
+                        <span className="absolute top-1 left-1 text-[9px] px-1 py-0.5 rounded bg-primary text-primary-foreground font-semibold">
+                          CAPA
+                        </span>
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => removeImage(idx)}
+                        className="absolute top-1 right-1 h-5 w-5 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center opacity-0 group-hover:opacity-100 transition"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </div>
+                  ))}
+                  {editing.image_urls.length < MAX_IMAGES && (
+                    <label className="cursor-pointer aspect-square rounded-lg border-2 border-dashed border-border bg-muted/30 hover:bg-muted flex flex-col items-center justify-center gap-1 text-muted-foreground text-[10px]">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        multiple
+                        className="hidden"
+                        onChange={(e) => {
+                          if (e.target.files && e.target.files.length > 0) {
+                            uploadFiles(e.target.files);
+                            e.target.value = "";
+                          }
+                        }}
+                      />
+                      {uploading ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <>
+                          <ImageIcon className="h-4 w-4" />
+                          <span>Adicionar</span>
+                        </>
+                      )}
+                    </label>
+                  )}
                 </div>
+                <p className="text-[11px] text-muted-foreground">
+                  A primeira imagem será usada como capa. {editing.image_urls.length}/{MAX_IMAGES}
+                </p>
               </div>
               <div className="flex items-center justify-between rounded-lg border border-border p-3">
                 <div>
@@ -306,43 +362,52 @@ function ProductsAdmin() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-          {products.map((p) => (
-            <div key={p.id} className="card-elevated rounded-xl p-3 flex gap-3">
-              <div className="h-20 w-20 rounded-lg bg-muted overflow-hidden flex-shrink-0">
-                {p.image_url ? (
-                  <img src={p.image_url} className="w-full h-full object-cover" />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center">
-                    <ImageIcon className="h-5 w-5 text-muted-foreground" />
-                  </div>
-                )}
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-start justify-between gap-2">
-                  <p className="font-medium line-clamp-1">{p.name}</p>
-                  {!p.active && (
-                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground">
-                      OFF
+          {products.map((p) => {
+            const cover = p.image_urls?.[0] ?? p.image_url;
+            const count = p.image_urls?.length ?? (p.image_url ? 1 : 0);
+            return (
+              <div key={p.id} className="card-elevated rounded-xl p-3 flex gap-3">
+                <div className="h-20 w-20 rounded-lg bg-muted overflow-hidden flex-shrink-0 relative">
+                  {cover ? (
+                    <img src={cover} className="w-full h-full object-cover" />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <ImageIcon className="h-5 w-5 text-muted-foreground" />
+                    </div>
+                  )}
+                  {count > 1 && (
+                    <span className="absolute bottom-1 right-1 text-[9px] px-1 py-0.5 rounded bg-black/70 text-white font-semibold">
+                      +{count - 1}
                     </span>
                   )}
                 </div>
-                <p className="text-sm text-primary font-semibold">{formatBRL(Number(p.price))}</p>
-                <div className="flex items-center gap-1 mt-2">
-                  <Button size="sm" variant="ghost" onClick={() => openEdit(p)} className="h-7">
-                    <Pencil className="h-3 w-3 mr-1" /> Editar
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    onClick={() => del(p.id)}
-                    className="h-7 text-destructive hover:text-destructive"
-                  >
-                    <Trash2 className="h-3 w-3" />
-                  </Button>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-start justify-between gap-2">
+                    <p className="font-medium line-clamp-1">{p.name}</p>
+                    {!p.active && (
+                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground">
+                        OFF
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-sm text-primary font-semibold">{formatBRL(Number(p.price))}</p>
+                  <div className="flex items-center gap-1 mt-2">
+                    <Button size="sm" variant="ghost" onClick={() => openEdit(p)} className="h-7">
+                      <Pencil className="h-3 w-3 mr-1" /> Editar
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => del(p.id)}
+                      className="h-7 text-destructive hover:text-destructive"
+                    >
+                      <Trash2 className="h-3 w-3" />
+                    </Button>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>
