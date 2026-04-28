@@ -141,16 +141,16 @@
   color: var(--primary-foreground);
   box-shadow: var(--shadow-glow);
   transition: var(--transition-base);
+  &:hover { transform: translateY(-1px); }
 }
-@utility btn-glow:hover { transform: translateY(-1px); }
 
 @utility card-elevated {
   background: var(--card);
   border: 1px solid var(--border);
   box-shadow: var(--shadow-card);
   transition: var(--transition-base);
-}
-@utility card-elevated:hover {
-  border-color: color-mix(in oklab, var(--primary) 40%, var(--border));
-  box-shadow: var(--shadow-elevated);
+  &:hover {
+    border-color: color-mix(in oklab, var(--primary) 40%, var(--border));
+    box-shadow: var(--shadow-elevated);
+  }
 }
