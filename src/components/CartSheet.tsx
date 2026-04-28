@@ -70,10 +70,12 @@ export function CartSheet({ open, onOpenChange }: Props) {
       );
       if (iErr) throw iErr;
 
-      // Dispara envio de e-mail (não bloqueia se falhar)
-      supabase.functions
-        .invoke("send-quote-email", { body: { quote_id: quote.id } })
-        .catch((e) => console.warn("email send failed", e));
+      // Dispara envio de e-mail via server route (portátil para VPS)
+      fetch("/api/send-quote-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ quote_id: quote.id }),
+      }).catch((e) => console.warn("email send failed", e));
 
       toast.success("Orçamento enviado! Entraremos em contato em breve.");
       clear();
