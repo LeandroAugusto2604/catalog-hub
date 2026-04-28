@@ -1,0 +1,3 @@
+project_id = "tgxvivfxstueitelvnal"
+[functions.send-quote-email]
+verify_jwt = false
