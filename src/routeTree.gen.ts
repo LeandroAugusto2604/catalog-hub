@@ -13,6 +13,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as ApiSendQuoteEmailRouteImport } from './routes/api.send-quote-email'
 import { Route as AdminQuotesRouteImport } from './routes/admin.quotes'
 
 const AuthRoute = AuthRouteImport.update({
@@ -35,6 +36,11 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AdminRoute,
 } as any)
+const ApiSendQuoteEmailRoute = ApiSendQuoteEmailRouteImport.update({
+  id: '/api/send-quote-email',
+  path: '/api/send-quote-email',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminQuotesRoute = AdminQuotesRouteImport.update({
   id: '/quotes',
   path: '/quotes',
@@ -46,12 +52,14 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRoute
   '/admin/quotes': typeof AdminQuotesRoute
+  '/api/send-quote-email': typeof ApiSendQuoteEmailRoute
   '/admin/': typeof AdminIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/admin/quotes': typeof AdminQuotesRoute
+  '/api/send-quote-email': typeof ApiSendQuoteEmailRoute
   '/admin': typeof AdminIndexRoute
 }
 export interface FileRoutesById {
@@ -60,20 +68,35 @@ export interface FileRoutesById {
   '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRoute
   '/admin/quotes': typeof AdminQuotesRoute
+  '/api/send-quote-email': typeof ApiSendQuoteEmailRoute
   '/admin/': typeof AdminIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/admin' | '/auth' | '/admin/quotes' | '/admin/'
+  fullPaths:
+    | '/'
+    | '/admin'
+    | '/auth'
+    | '/admin/quotes'
+    | '/api/send-quote-email'
+    | '/admin/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/admin/quotes' | '/admin'
-  id: '__root__' | '/' | '/admin' | '/auth' | '/admin/quotes' | '/admin/'
+  to: '/' | '/auth' | '/admin/quotes' | '/api/send-quote-email' | '/admin'
+  id:
+    | '__root__'
+    | '/'
+    | '/admin'
+    | '/auth'
+    | '/admin/quotes'
+    | '/api/send-quote-email'
+    | '/admin/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRouteWithChildren
   AuthRoute: typeof AuthRoute
+  ApiSendQuoteEmailRoute: typeof ApiSendQuoteEmailRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -106,6 +129,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/api/send-quote-email': {
+      id: '/api/send-quote-email'
+      path: '/api/send-quote-email'
+      fullPath: '/api/send-quote-email'
+      preLoaderRoute: typeof ApiSendQuoteEmailRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/quotes': {
       id: '/admin/quotes'
       path: '/quotes'
@@ -132,7 +162,17 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRouteWithChildren,
   AuthRoute: AuthRoute,
+  ApiSendQuoteEmailRoute: ApiSendQuoteEmailRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}
