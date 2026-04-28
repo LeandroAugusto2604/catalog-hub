@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Trash2, Minus, Plus, ShoppingBag, MessageCircle } from "lucide-react";
 
-const STORE_WHATSAPP = "551193760073";
+const STORE_WHATSAPP = "5511973460073";
 import { useCart, formatBRL } from "@/lib/cart";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
