@@ -6,7 +6,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Trash2, Minus, Plus, ShoppingBag, MessageCircle } from "lucide-react";
 import { useCart, formatBRL } from "@/lib/cart";
-import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { z } from "zod";
 
@@ -48,34 +47,27 @@ export function CartSheet({ open, onOpenChange }: Props) {
 
     setSubmitting(true);
     try {
-      const quoteId = crypto.randomUUID();
-      const { error: qErr } = await supabase.from("quotes").insert({
-        id: quoteId,
-        customer_name: parsed.data.customer_name,
-        whatsapp: parsed.data.whatsapp,
-        email: parsed.data.email,
-        notes: parsed.data.notes ?? null,
-        total,
-      });
-      if (qErr) throw qErr;
-
-      const { error: iErr } = await supabase.from("quote_items").insert(
-        items.map((i) => ({
-          quote_id: quoteId,
-          product_id: i.id,
-          product_name: i.name,
-          unit_price: i.price,
-          quantity: i.quantity,
-        }))
-      );
-      if (iErr) throw iErr;
-
-      // Dispara envio de e-mail via server route (portátil para VPS)
-      fetch("/api/send-quote-email", {
+      const response = await fetch("/api/send-quote-email", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ quote_id: quoteId }),
-      }).catch((e) => console.warn("email send failed", e));
+        body: JSON.stringify({
+          customer_name: parsed.data.customer_name,
+          whatsapp: parsed.data.whatsapp,
+          email: parsed.data.email,
+          notes: parsed.data.notes ?? null,
+          total,
+          items: items.map((i) => ({
+            product_id: i.id,
+            product_name: i.name,
+            unit_price: i.price,
+            quantity: i.quantity,
+          })),
+        }),
+      });
+      if (!response.ok) {
+        const data = await response.json().catch(() => null);
+        throw new Error(data?.error ?? "Falha ao enviar orçamento");
+      }
 
       toast.success("Orçamento enviado! Entraremos em contato em breve.");
       clear();
