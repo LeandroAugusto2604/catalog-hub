@@ -9,7 +9,7 @@
     "build:dev": "vite build --mode development",
     "build:node": "cross-env BUILD_TARGET=node vite build",
     "preview": "vite preview",
-    "start": "node .output/server/index.mjs",
+    "start": "node dist/server/server.js",
     "lint": "eslint .",
     "format": "prettier --write ."
   },
