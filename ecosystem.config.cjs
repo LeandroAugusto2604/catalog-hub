@@ -2,7 +2,7 @@ module.exports = {
   apps: [
     {
       name: "catalogo",
-      script: ".output/server/index.mjs",
+      script: "dist/server/server.js",
       cwd: __dirname,
       instances: 1,
       exec_mode: "fork",
