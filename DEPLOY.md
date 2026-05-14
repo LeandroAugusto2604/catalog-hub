@@ -34,7 +34,7 @@ então precisam estar preenchidas **antes** do passo 3.
 npm run build:node
 ```
 
-Isso gera a pasta `.output/` com o servidor Node + assets estáticos.
+Isso gera a pasta `dist/` (`dist/client/` com os assets e `dist/server/server.js` com o servidor Node).
 
 ## 4. Iniciar com PM2
 
