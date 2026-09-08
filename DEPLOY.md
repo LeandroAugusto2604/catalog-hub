@@ -44,8 +44,8 @@ sudo apt install -y certbot python3-certbot-nginx
 
 ```bash
 cd /var/www
-git clone SEU_REPOSITORIO tudotop
-cd tudotop
+git clone SEU_REPOSITORIO catalog-hub
+cd catalog-hub
 
 bun install          # ou: npm install
 
@@ -111,7 +111,7 @@ O certificado renova automaticamente.
 ## 8. Atualizar depois de novas mudanças
 
 ```bash
-cd /var/www/tudotop
+cd /var/www/catalog-hub
 git pull
 bun install
 bun run build:vps
