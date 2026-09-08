@@ -12,6 +12,13 @@ import { serveStatic } from "srvx/static";
 const here = dirname(fileURLToPath(import.meta.url));
 const root = resolve(here, "..");
 
+// Lê as configurações do arquivo .env da raiz do projeto
+try {
+  process.loadEnvFile(resolve(root, ".env"));
+} catch {
+  console.warn("Aviso: arquivo .env não encontrado ou não lido.");
+}
+
 const app = await import(resolve(root, "dist/server/server.js"));
 const handler = app.default?.fetch ?? app.fetch;
 
