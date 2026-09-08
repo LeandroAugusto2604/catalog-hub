@@ -2,6 +2,9 @@
 
 Guia completo, do zero até o site no ar com HTTPS.
 
+> Vai usar a sua própria conta Supabase? Faça primeiro o **[MIGRACAO-SUPABASE.md](./MIGRACAO-SUPABASE.md)**
+> e depois volte para cá com as chaves em mãos.
+
 ---
 
 ## 1. Apontar o domínio
