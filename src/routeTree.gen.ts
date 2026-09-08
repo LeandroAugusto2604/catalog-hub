@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
@@ -16,6 +17,11 @@ import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as ApiSendQuoteEmailRouteImport } from './routes/api.send-quote-email'
 import { Route as AdminQuotesRouteImport } from './routes/admin.quotes'
 
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
@@ -51,6 +57,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/admin/quotes': typeof AdminQuotesRoute
   '/api/send-quote-email': typeof ApiSendQuoteEmailRoute
   '/admin/': typeof AdminIndexRoute
@@ -58,6 +65,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/admin/quotes': typeof AdminQuotesRoute
   '/api/send-quote-email': typeof ApiSendQuoteEmailRoute
   '/admin': typeof AdminIndexRoute
@@ -67,6 +75,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/admin/quotes': typeof AdminQuotesRoute
   '/api/send-quote-email': typeof ApiSendQuoteEmailRoute
   '/admin/': typeof AdminIndexRoute
@@ -77,16 +86,24 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/auth'
+    | '/reset-password'
     | '/admin/quotes'
     | '/api/send-quote-email'
     | '/admin/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/admin/quotes' | '/api/send-quote-email' | '/admin'
+  to:
+    | '/'
+    | '/auth'
+    | '/reset-password'
+    | '/admin/quotes'
+    | '/api/send-quote-email'
+    | '/admin'
   id:
     | '__root__'
     | '/'
     | '/admin'
     | '/auth'
+    | '/reset-password'
     | '/admin/quotes'
     | '/api/send-quote-email'
     | '/admin/'
@@ -96,11 +113,19 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRouteWithChildren
   AuthRoute: typeof AuthRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
   ApiSendQuoteEmailRoute: typeof ApiSendQuoteEmailRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth': {
       id: '/auth'
       path: '/auth'
@@ -162,6 +187,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRouteWithChildren,
   AuthRoute: AuthRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
   ApiSendQuoteEmailRoute: ApiSendQuoteEmailRoute,
 }
 export const routeTree = rootRouteImport

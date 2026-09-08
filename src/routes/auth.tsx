@@ -21,7 +21,7 @@ export const Route = createFileRoute("/auth")({
 
 function Auth() {
   const nav = useNavigate();
-  const [mode, setMode] = useState<"login" | "signup">("login");
+  const [mode, setMode] = useState<"login" | "signup" | "forgot">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
@@ -37,7 +37,14 @@ function Auth() {
     e.preventDefault();
     setLoading(true);
     try {
-      if (mode === "signup") {
+      if (mode === "forgot") {
+        const { error } = await supabase.auth.resetPasswordForEmail(email, {
+          redirectTo: `${window.location.origin}/reset-password`,
+        });
+        if (error) throw error;
+        toast.success("Enviamos um link de redefinição para o seu e-mail.");
+        setMode("login");
+      } else if (mode === "signup") {
         const { error } = await supabase.auth.signUp({
           email,
           password,
