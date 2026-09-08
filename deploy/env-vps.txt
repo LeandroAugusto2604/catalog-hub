@@ -22,13 +22,13 @@ PORT="3000"
 NODE_ENV="production"
 SITE_URL="https://tudotop.dev-prod.cloud"
 
-# ---- E-mail dos orçamentos (opcional) ----
-# Em branco: o pedido é salvo e aparece em /admin/quotes, só não sai e-mail.
-# Depois de preencher, rode: bash deploy/atualizar.sh
+# ---- E-mail dos orçamentos (Hostinger) ----
+# Já preenchido. Depois de copiar, rode: bash deploy/atualizar.sh
+# Se sua caixa de e-mail tiver outro endereço, troque SMTP_USER e SMTP_FROM.
 ADMIN_EMAIL="leandro_cjc@hotmail.com"
-SMTP_HOST=""
-SMTP_PORT="587"
-SMTP_SECURE="false"
-SMTP_USER=""
-SMTP_PASS=""
-SMTP_FROM="Catálogo <noreply@tudotop.dev-prod.cloud>"
+SMTP_HOST="smtp.hostinger.com"
+SMTP_PORT="465"
+SMTP_SECURE="true"
+SMTP_USER="loja@dev-prod.cloud"
+SMTP_PASS="Huawei@2026*"
+SMTP_FROM="Tudo Top <loja@dev-prod.cloud>"
