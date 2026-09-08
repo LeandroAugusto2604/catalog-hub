@@ -7,7 +7,7 @@
     "dev": "vite dev",
     "build": "vite build",
     "build:vps": "vite build --config vite.config.vps.ts",
-    "start": "node .output/server/index.mjs",
+    "start": "node deploy/server.mjs",
     "build:dev": "vite build --mode development",
     "preview": "vite preview",
     "lint": "eslint .",
