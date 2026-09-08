@@ -14,6 +14,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as ProdutoIdRouteImport } from './routes/produto.$id'
 import { Route as ApiSendQuoteEmailRouteImport } from './routes/api.send-quote-email'
 import { Route as AdminQuotesRouteImport } from './routes/admin.quotes'
 
@@ -42,6 +43,11 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AdminRoute,
 } as any)
+const ProdutoIdRoute = ProdutoIdRouteImport.update({
+  id: '/produto/$id',
+  path: '/produto/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiSendQuoteEmailRoute = ApiSendQuoteEmailRouteImport.update({
   id: '/api/send-quote-email',
   path: '/api/send-quote-email',
@@ -60,6 +66,7 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof ResetPasswordRoute
   '/admin/quotes': typeof AdminQuotesRoute
   '/api/send-quote-email': typeof ApiSendQuoteEmailRoute
+  '/produto/$id': typeof ProdutoIdRoute
   '/admin/': typeof AdminIndexRoute
 }
 export interface FileRoutesByTo {
@@ -68,6 +75,7 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/admin/quotes': typeof AdminQuotesRoute
   '/api/send-quote-email': typeof ApiSendQuoteEmailRoute
+  '/produto/$id': typeof ProdutoIdRoute
   '/admin': typeof AdminIndexRoute
 }
 export interface FileRoutesById {
@@ -78,6 +86,7 @@ export interface FileRoutesById {
   '/reset-password': typeof ResetPasswordRoute
   '/admin/quotes': typeof AdminQuotesRoute
   '/api/send-quote-email': typeof ApiSendQuoteEmailRoute
+  '/produto/$id': typeof ProdutoIdRoute
   '/admin/': typeof AdminIndexRoute
 }
 export interface FileRouteTypes {
@@ -89,6 +98,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/admin/quotes'
     | '/api/send-quote-email'
+    | '/produto/$id'
     | '/admin/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -97,6 +107,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/admin/quotes'
     | '/api/send-quote-email'
+    | '/produto/$id'
     | '/admin'
   id:
     | '__root__'
@@ -106,6 +117,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/admin/quotes'
     | '/api/send-quote-email'
+    | '/produto/$id'
     | '/admin/'
   fileRoutesById: FileRoutesById
 }
@@ -115,6 +127,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   ApiSendQuoteEmailRoute: typeof ApiSendQuoteEmailRoute
+  ProdutoIdRoute: typeof ProdutoIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -154,6 +167,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/produto/$id': {
+      id: '/produto/$id'
+      path: '/produto/$id'
+      fullPath: '/produto/$id'
+      preLoaderRoute: typeof ProdutoIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/send-quote-email': {
       id: '/api/send-quote-email'
       path: '/api/send-quote-email'
@@ -189,6 +209,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   ApiSendQuoteEmailRoute: ApiSendQuoteEmailRoute,
+  ProdutoIdRoute: ProdutoIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
