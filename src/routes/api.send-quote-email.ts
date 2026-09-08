@@ -84,22 +84,11 @@ export const Route = createFileRoute("/api/send-quote-email")({
           );
           if (insertItemsError) throw insertItemsError;
 
-          const { data: quote, error: qe } = await supabase
-            .from("quotes")
-            .select("*")
-            .eq("id", quote_id)
-            .single();
-          if (qe || !quote) {
-            return Response.json(
-              { error: "Orçamento não encontrado" },
-              { status: 404 }
-            );
-          }
+          // Usamos os dados já validados (não relemos o banco, pois a leitura
+          // de orçamentos é restrita ao administrador).
+          const quote = parsed.data;
+          const items = parsed.data.items;
 
-          const { data: items } = await supabase
-            .from("quote_items")
-            .select("*")
-            .eq("quote_id", quote_id);
 
           const SMTP_HOST = process.env.SMTP_HOST;
           const SMTP_PORT = Number(process.env.SMTP_PORT ?? 587);
