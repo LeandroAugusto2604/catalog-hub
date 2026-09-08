@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "@tanstack/react-router";
 import { Plus, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCart, formatBRL } from "@/lib/cart";
