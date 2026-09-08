@@ -84,7 +84,9 @@ function Auth() {
           <div className="h-12 w-12 rounded-xl btn-glow mx-auto flex items-center justify-center font-bold text-xl mb-3">
             C
           </div>
-          <h1 className="text-2xl font-bold">{mode === "login" ? "Entrar" : "Criar conta"}</h1>
+          <h1 className="text-2xl font-bold">
+            {mode === "login" ? "Entrar" : mode === "signup" ? "Criar conta" : "Recuperar senha"}
+          </h1>
           <p className="text-sm text-muted-foreground mt-1">Painel administrativo</p>
         </div>
 
@@ -99,19 +101,27 @@ function Auth() {
             <Label htmlFor="e">E-mail</Label>
             <Input id="e" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="p">Senha</Label>
-            <Input
-              id="p"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              minLength={6}
-              required
-            />
-          </div>
+          {mode !== "forgot" && (
+            <div className="space-y-2">
+              <Label htmlFor="p">Senha</Label>
+              <Input
+                id="p"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                minLength={6}
+                required
+              />
+            </div>
+          )}
           <Button type="submit" disabled={loading} className="w-full btn-glow border-0">
-            {loading ? "Aguarde..." : mode === "login" ? "Entrar" : "Criar conta"}
+            {loading
+              ? "Aguarde..."
+              : mode === "login"
+                ? "Entrar"
+                : mode === "signup"
+                  ? "Criar conta"
+                  : "Enviar link de redefinição"}
           </Button>
         </form>
 
@@ -120,6 +130,13 @@ function Auth() {
           className="mt-4 text-sm text-muted-foreground hover:text-primary w-full text-center"
         >
           {mode === "login" ? "Não tem conta? Criar conta" : "Já tem conta? Entrar"}
+        </button>
+
+        <button
+          onClick={() => setMode(mode === "forgot" ? "login" : "forgot")}
+          className="mt-2 text-sm text-muted-foreground hover:text-primary w-full text-center"
+        >
+          {mode === "forgot" ? "Voltar ao login" : "Esqueci minha senha"}
         </button>
 
         <p className="mt-6 text-xs text-muted-foreground text-center">
