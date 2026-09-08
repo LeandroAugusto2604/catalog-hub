@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "@tanstack/react-router";
 import { Plus, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCart, formatBRL } from "@/lib/cart";
@@ -98,7 +99,15 @@ export function ProductCard({ product }: { product: ProductCardData }) {
         </div>
       )}
       <div className="p-4 flex flex-col gap-2 flex-1">
-        <h3 className="font-medium leading-tight line-clamp-2">{product.name}</h3>
+        <h3 className="font-medium leading-tight line-clamp-2">
+          <Link
+            to="/produto/$id"
+            params={{ id: product.id }}
+            className="hover:text-primary transition-colors"
+          >
+            {product.name}
+          </Link>
+        </h3>
         {product.description && (
           <p className="text-sm text-muted-foreground line-clamp-2">{product.description}</p>
         )}
