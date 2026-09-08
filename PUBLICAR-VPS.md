@@ -31,7 +31,7 @@ Conecte por SSH (`ssh root@76.13.80.61`) e rode:
 ```bash
 cd /var/www
 git clone SEU-REPOSITORIO-DO-GITHUB catalog-hub
-cd tudotop
+cd catalog-hub
 bash deploy/setup-vps.sh
 ```
 

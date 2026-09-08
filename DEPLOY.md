@@ -45,7 +45,7 @@ sudo apt install -y certbot python3-certbot-nginx
 ```bash
 cd /var/www
 git clone SEU_REPOSITORIO catalog-hub
-cd tudotop
+cd catalog-hub
 
 bun install          # ou: npm install
 
