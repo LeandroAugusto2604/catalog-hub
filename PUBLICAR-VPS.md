@@ -17,17 +17,12 @@ No painel onde o domínio `dev-prod.cloud` está registrado, crie:
 
 Espere alguns minutos até o domínio responder.
 
-## 2. Criar o seu banco no Supabase
+## 2. Banco de dados — nada a fazer
 
-Siga o guia **MIGRACAO-SUPABASE.md**. Resumo:
+A VPS vai usar o mesmo banco de hoje, com os seus produtos, pedidos, login e fotos.
+Os dados de acesso já estão prontos no arquivo do passo 4.
 
-1. Crie um projeto novo em supabase.com (região South America).
-2. Em **Storage**, crie dois espaços públicos: `product-images` e `products`.
-3. Em **SQL Editor**, cole todo o conteúdo de `deploy/supabase-schema.sql` e clique em Run.
-4. Em **Authentication → URL Configuration**: Site URL `https://tudotop.dev-prod.cloud`
-   e Redirect URLs `https://tudotop.dev-prod.cloud/**`.
-5. Em **Project Settings → API**, copie: a URL do projeto, a chave `anon/publishable`
-   e a chave `service_role`.
+Se algum dia você quiser um banco só seu, o guia **MIGRACAO-SUPABASE.md** explica como.
 
 ## 3. Preparar a VPS
 
