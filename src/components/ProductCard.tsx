@@ -26,9 +26,11 @@ export function ProductCard({ product }: { product: ProductCardData }) {
         : [];
 
   const media: { type: "image" | "video"; url: string }[] = [
-    ...images.map((url) => ({ type: "image" as const, url })),
+    ...images.slice(0, 1).map((url) => ({ type: "image" as const, url })),
     ...(product.video_url ? [{ type: "video" as const, url: product.video_url }] : []),
+    ...images.slice(1).map((url) => ({ type: "image" as const, url })),
   ];
+
 
   const [active, setActive] = useState(0);
   const current = media[active];

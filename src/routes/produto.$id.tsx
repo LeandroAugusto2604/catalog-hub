@@ -78,9 +78,11 @@ function ProductPage() {
           ? [product.image_url]
           : [];
     return [
-      ...imgs.map((url) => ({ type: "image" as const, url })),
+      ...imgs.slice(0, 1).map((url) => ({ type: "image" as const, url })),
       ...(product.video_url ? [{ type: "video" as const, url: product.video_url }] : []),
+      ...imgs.slice(1).map((url) => ({ type: "image" as const, url })),
     ];
+
   }, [product]);
 
   const current = media[active];
