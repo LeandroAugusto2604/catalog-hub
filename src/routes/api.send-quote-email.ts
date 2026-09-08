@@ -118,33 +118,74 @@ export const Route = createFileRoute("/api/send-quote-email")({
             )
             .join("");
 
-          const html = `
-            <div style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto;padding:24px;background:#fff;color:#111">
-              <h2 style="color:#ea580c;margin:0 0 16px">Orçamento recebido</h2>
-              <p>Olá <strong>${quote.customer_name}</strong>, recebemos seu pedido. Em breve entraremos em contato.</p>
-              <table style="width:100%;border-collapse:collapse;margin:16px 0">${itemsHtml}
-                <tr><td style="padding:12px 8px;font-weight:bold">Total</td><td style="padding:12px 8px;text-align:right;font-weight:bold;color:#ea580c">${fmt(Number(quote.total))}</td></tr>
-              </table>
-              ${quote.notes ? `<p style="background:#f5f5f5;padding:12px;border-radius:8px"><strong>Observações:</strong><br>${quote.notes}</p>` : ""}
-              <p style="font-size:12px;color:#666;margin-top:24px">WhatsApp: ${quote.whatsapp} · E-mail: ${quote.email}</p>
-            </div>`;
+          const itemsTable = `
+            <table style="width:100%;border-collapse:collapse;margin:16px 0">${itemsHtml}
+              <tr><td style="padding:12px 8px;font-weight:bold">Total</td><td style="padding:12px 8px;text-align:right;font-weight:bold;color:#ea580c">${fmt(Number(quote.total))}</td></tr>
+            </table>`;
 
-          await Promise.all([
+          const notesBlock = quote.notes
+            ? `<p style="background:#f5f5f5;padding:12px;border-radius:8px"><strong>Observações:</strong><br>${quote.notes}</p>`
+            : "";
+
+          const wrap = (inner: string) => `
+            <div style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto;padding:24px;background:#fff;color:#111">${inner}</div>`;
+
+          // E-mail para o cliente: confirmação
+          const customerHtml = wrap(`
+            <h2 style="color:#ea580c;margin:0 0 16px">Recebemos seu orçamento</h2>
+            <p>Olá <strong>${quote.customer_name}</strong>, obrigado pelo seu pedido! Em breve entraremos em contato pelo WhatsApp ${quote.whatsapp}.</p>
+            <h3 style="margin:24px 0 0;font-size:15px">Itens solicitados</h3>
+            ${itemsTable}
+            ${notesBlock}
+            <p style="font-size:12px;color:#666;margin-top:24px">Este é um resumo do seu pedido de orçamento. Se algum dado estiver errado, responda a este e-mail.</p>
+          `);
+
+          // E-mail para o vendedor: dados de contato em destaque
+          const adminHtml = wrap(`
+            <h2 style="color:#ea580c;margin:0 0 16px">Novo orçamento recebido</h2>
+            <table style="width:100%;border-collapse:collapse;background:#fff7ed;border-radius:8px">
+              <tr><td style="padding:8px 12px;color:#666">Cliente</td><td style="padding:8px 12px;font-weight:bold">${quote.customer_name}</td></tr>
+              <tr><td style="padding:8px 12px;color:#666">WhatsApp</td><td style="padding:8px 12px;font-weight:bold">${quote.whatsapp}</td></tr>
+              <tr><td style="padding:8px 12px;color:#666">E-mail</td><td style="padding:8px 12px;font-weight:bold">${quote.email}</td></tr>
+            </table>
+            <h3 style="margin:24px 0 0;font-size:15px">Itens</h3>
+            ${itemsTable}
+            ${notesBlock}
+            <p style="font-size:12px;color:#666;margin-top:24px">Pedido nº ${quote_id}</p>
+          `);
+
+          const results = await Promise.allSettled([
             transporter.sendMail({
               from: SMTP_FROM,
               to: quote.email,
               subject: "Recebemos seu orçamento",
-              html,
+              html: customerHtml,
+              replyTo: ADMIN_EMAIL,
             }),
             transporter.sendMail({
               from: SMTP_FROM,
               to: ADMIN_EMAIL,
-              subject: `Novo orçamento: ${quote.customer_name}`,
-              html,
+              subject: `Novo orçamento: ${quote.customer_name} — ${fmt(Number(quote.total))}`,
+              html: adminHtml,
+              replyTo: quote.email,
             }),
           ]);
 
-          return Response.json({ ok: true });
+          results.forEach((r, i) => {
+            if (r.status === "rejected") {
+              console.error(
+                `[send-quote-email] falha no envio (${i === 0 ? "cliente" : "vendedor"}):`,
+                r.reason
+              );
+            }
+          });
+
+          // O pedido já está salvo: nunca falhamos por causa do e-mail.
+          return Response.json({
+            ok: true,
+            emailCustomer: results[0].status === "fulfilled",
+            emailAdmin: results[1].status === "fulfilled",
+          });
         } catch (err: any) {
           console.error("[send-quote-email] error:", err);
           return Response.json(
