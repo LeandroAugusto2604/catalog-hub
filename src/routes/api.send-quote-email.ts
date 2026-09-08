@@ -45,16 +45,23 @@ export const Route = createFileRoute("/api/send-quote-email")({
           }
           const quote_id = crypto.randomUUID();
 
-          const SUPABASE_URL = process.env.SUPABASE_URL;
-          const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
-          if (!SUPABASE_URL || !SERVICE_KEY) {
+          const SUPABASE_URL = process.env.SUPABASE_URL ?? process.env.VITE_SUPABASE_URL;
+          // A chave de serviço é opcional: sem ela usamos a chave pública, que
+          // tem permissão apenas para CRIAR orçamentos (nunca para ler).
+          const SUPABASE_KEY =
+            process.env.SUPABASE_SERVICE_ROLE_KEY ||
+            process.env.SUPABASE_PUBLISHABLE_KEY ||
+            process.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+          if (!SUPABASE_URL || !SUPABASE_KEY) {
             return Response.json(
               { error: "Supabase não configurado" },
               { status: 500 }
             );
           }
 
-          const supabase = createClient(SUPABASE_URL, SERVICE_KEY);
+          const supabase = createClient(SUPABASE_URL, SUPABASE_KEY, {
+            auth: { persistSession: false, autoRefreshToken: false },
+          });
 
           const { error: insertQuoteError } = await supabase.from("quotes").insert({
             id: quote_id,
