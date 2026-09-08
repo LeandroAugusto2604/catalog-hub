@@ -4,7 +4,7 @@ module.exports = {
   apps: [
     {
       name: "tudotop",
-      script: ".output/server/index.mjs",
+      script: "deploy/server.mjs",
       cwd: __dirname,
       exec_mode: "fork",
       instances: 1,
