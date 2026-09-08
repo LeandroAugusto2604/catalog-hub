@@ -1,6 +1,6 @@
 // Configuração de build para hospedagem própria (VPS com Node).
 // Diferença em relação ao vite.config.ts: NÃO usa o plugin do Cloudflare,
-// gera uma saída Node em .output/server/index.mjs para rodar com PM2.
+// gera uma saída Node em dist/ (iniciada por deploy/server.mjs com PM2).
 //
 // Uso na VPS:  bun run build:vps   (ou: npx vite build --config vite.config.vps.ts)
 import { defineConfig } from "vite";
