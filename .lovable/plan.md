@@ -1,32 +1,35 @@
-# Deixar as configurações do site prontas para a VPS
+# Criar o arquivo de configuração já preenchido
 
-Objetivo: você abrir o `.env` na VPS e saber, sem dúvida, o que colocar em cada linha — e levar os produtos, categorias e pedidos atuais para o seu próprio banco.
+Você copia um arquivo só, renomeia para `.env` na VPS e o site sobe.
 
-## Caminho escolhido
+## O que eu vou criar
 
-Banco próprio no Supabase (é o único jeito de o envio de orçamento por e-mail funcionar na sua VPS, porque ele precisa da chave de serviço, que o banco atual da Lovable não disponibiliza).
+**`deploy/env-vps.txt`** — arquivo já preenchido com os dados do banco que o site usa hoje:
 
-## O que eu vou preparar
+- endereço do banco: `https://tgxvivfxstueitelvnal.supabase.co`
+- chave pública do banco (a mesma que o site já usa no navegador)
+- identificador do projeto: `tgxvivfxstueitelvnal`
+- `PORT=3000`
+- `SITE_URL=https://tudotop.dev-prod.cloud`
+- `ADMIN_EMAIL=leandro_cjc@hotmail.com`
+- campos de e-mail (`SMTP_*`) em branco, com comentário explicando que dá para preencher depois
 
-1. **`.env.example` autoexplicativo**
-   Cada linha ganha um comentário curto dizendo o nome exato do campo no painel do Supabase e um exemplo do formato. Nada de termos soltos.
+Na VPS:
 
-2. **Comando que cria o `.env` perguntando os valores**
-   Um `bash deploy/configurar.sh` que pergunta um dado por vez ("Cole a URL do projeto", "Cole a chave anon", ...), confere se não ficou vazio e grava o `.env` já pronto. Assim você não precisa editar arquivo no terminal.
+```bash
+cd /var/www/tudotop
+cp deploy/env-vps.txt .env
+bash deploy/atualizar.sh
+```
 
-3. **Guia com fotos-passo do painel (texto)**
-   Uma seção nova no `PUBLICAR-VPS.md` com o caminho exato de cada valor:
-   - URL do projeto e chave pública: Project Settings → API → Project URL / anon key
-   - Chave de serviço: Project Settings → API → service_role → Reveal
-   - Identificador do projeto: o trecho que aparece dentro da própria URL
+Com isso o catálogo, o login, as fotos e o painel funcionam na sua VPS usando o mesmo banco de hoje — seus produtos e pedidos aparecem lá sem migrar nada.
 
-4. **Levar os dados atuais**
-   Eu gero `deploy/dados-atuais.sql` com as suas categorias, produtos e pedidos de hoje, para você colar no SQL Editor do seu projeto novo depois da estrutura. Assim o site sobe já com o conteúdo que você cadastrou.
+## Uma linha que eu não posso preencher
 
-5. **Checagem final**
-   Uma lista curta no guia para conferir que o site subiu certo: catálogo abre, login funciona, `/admin` abre, foto sobe, orçamento é salvo.
+`SUPABASE_SERVICE_ROLE_KEY` fica em branco. Essa chave não é disponibilizada no ambiente da Lovable, e ela é usada só no momento de gravar o orçamento pelo servidor.
 
-## Observações
+Para o orçamento continuar funcionando, eu ajusto o envio para gravar o pedido usando a chave pública com uma regra de acesso segura no banco (permite criar o pedido, mas não ler os pedidos de ninguém). Assim nada depende dessa chave e o site fica completo na VPS.
 
-- Os campos de e-mail continuam podendo ficar em branco: o pedido é salvo e aparece no painel; quando você tiver um serviço de e-mail, preenche e roda o comando de atualização.
-- Nenhuma senha ou chave sua fica dentro do projeto — tudo apenas no `.env` da sua VPS.
+## Também no plano
+
+Atualizo o `PUBLICAR-VPS.md` para apontar esse arquivo único, no lugar de preencher chave por chave.
