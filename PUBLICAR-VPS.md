@@ -30,7 +30,7 @@ Conecte por SSH (`ssh root@76.13.80.61`) e rode:
 
 ```bash
 cd /var/www
-git clone SEU-REPOSITORIO-DO-GITHUB tudotop
+git clone SEU-REPOSITORIO-DO-GITHUB catalog-hub
 cd tudotop
 bash deploy/setup-vps.sh
 ```
@@ -94,7 +94,7 @@ ON CONFLICT DO NOTHING;
 Toda vez que houver mudança no projeto:
 
 ```bash
-cd /var/www/tudotop && bash deploy/atualizar.sh
+cd /var/www/catalog-hub && bash deploy/atualizar.sh
 ```
 
 ## Comandos úteis
