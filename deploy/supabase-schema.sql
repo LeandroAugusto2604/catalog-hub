@@ -65,6 +65,7 @@ CREATE TABLE IF NOT EXISTS public.products (
   price numeric NOT NULL DEFAULT 0,
   image_url text,
   image_urls text[] NOT NULL DEFAULT '{}'::text[],
+  video_url text,
   category_id uuid REFERENCES public.categories(id) ON DELETE SET NULL,
   active boolean NOT NULL DEFAULT true,
   created_at timestamptz NOT NULL DEFAULT now(),

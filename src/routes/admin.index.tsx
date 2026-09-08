@@ -20,7 +20,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { Pencil, Plus, Trash2, Loader2, ImageIcon, X } from "lucide-react";
+import { Pencil, Plus, Trash2, Loader2, ImageIcon, X, Video } from "lucide-react";
 import { toast } from "sonner";
 import { formatBRL } from "@/lib/cart";
 
@@ -29,6 +29,8 @@ export const Route = createFileRoute("/admin/")({
 });
 
 const MAX_IMAGES = 5;
+const MAX_VIDEO_SECONDS = 60;
+const MAX_VIDEO_MB = 50;
 
 interface Product {
   id: string;
@@ -37,6 +39,7 @@ interface Product {
   price: number;
   image_url: string | null;
   image_urls: string[] | null;
+  video_url: string | null;
   category_id: string | null;
   active: boolean;
 }
@@ -51,6 +54,7 @@ interface EditingState {
   description: string;
   price: string;
   image_urls: string[];
+  video_url: string;
   category_id: string;
   active: boolean;
 }
@@ -61,6 +65,7 @@ const empty: EditingState = {
   description: "",
   price: "",
   image_urls: [],
+  video_url: "",
   category_id: "",
   active: true,
 };
@@ -73,6 +78,7 @@ function ProductsAdmin() {
   const [editing, setEditing] = useState<EditingState>(empty);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [uploadingVideo, setUploadingVideo] = useState(false);
 
   const [newCat, setNewCat] = useState("");
 
@@ -105,6 +111,7 @@ function ProductsAdmin() {
       description: p.description ?? "",
       price: String(p.price),
       image_urls: urls,
+      video_url: p.video_url ?? "",
       category_id: p.category_id ?? "",
       active: p.active,
     });
@@ -138,6 +145,40 @@ function ProductsAdmin() {
     }
   };
 
+  const uploadVideo = async (file: File) => {
+    if (file.size > MAX_VIDEO_MB * 1024 * 1024) {
+      toast.error(`O vídeo deve ter no máximo ${MAX_VIDEO_MB} MB`);
+      return;
+    }
+    const duration = await new Promise<number>((resolve) => {
+      const el = document.createElement("video");
+      el.preload = "metadata";
+      el.onloadedmetadata = () => resolve(el.duration || 0);
+      el.onerror = () => resolve(0);
+      el.src = URL.createObjectURL(file);
+    });
+    if (duration > MAX_VIDEO_SECONDS + 1) {
+      toast.error("O vídeo deve ter no máximo 1 minuto");
+      return;
+    }
+    setUploadingVideo(true);
+    try {
+      const ext = file.name.split(".").pop() || "mp4";
+      const path = `videos/${crypto.randomUUID()}.${ext}`;
+      const { error } = await supabase.storage
+        .from("product-images")
+        .upload(path, file, { contentType: file.type || "video/mp4" });
+      if (error) throw error;
+      const { data } = supabase.storage.from("product-images").getPublicUrl(path);
+      setEditing((e) => ({ ...e, video_url: data.publicUrl }));
+      toast.success("Vídeo enviado");
+    } catch (err: any) {
+      toast.error(err.message ?? "Falha no envio do vídeo");
+    } finally {
+      setUploadingVideo(false);
+    }
+  };
+
   const removeImage = (idx: number) => {
     setEditing((e) => ({ ...e, image_urls: e.image_urls.filter((_, i) => i !== idx) }));
   };
@@ -155,6 +196,7 @@ function ProductsAdmin() {
         price: Number(editing.price),
         image_url: editing.image_urls[0] ?? null,
         image_urls: editing.image_urls,
+        video_url: editing.video_url || null,
         category_id: editing.category_id || null,
         active: editing.active,
       };
@@ -306,6 +348,43 @@ function ProductsAdmin() {
                 <p className="text-[11px] text-muted-foreground">
                   A primeira imagem será usada como capa. {editing.image_urls.length}/{MAX_IMAGES}
                 </p>
+              </div>
+              <div className="space-y-1.5">
+                <Label>Vídeo demonstrativo (até 1 minuto)</Label>
+                {editing.video_url ? (
+                  <div className="relative rounded-lg overflow-hidden bg-muted">
+                    <video src={editing.video_url} controls className="w-full max-h-52" />
+                    <button
+                      type="button"
+                      onClick={() => setEditing((e) => ({ ...e, video_url: "" }))}
+                      className="absolute top-1 right-1 h-6 w-6 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center"
+                      aria-label="Remover vídeo"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </div>
+                ) : (
+                  <label className="cursor-pointer rounded-lg border-2 border-dashed border-border bg-muted/30 hover:bg-muted flex items-center justify-center gap-2 py-4 text-xs text-muted-foreground">
+                    <input
+                      type="file"
+                      accept="video/*"
+                      className="hidden"
+                      onChange={(e) => {
+                        const f = e.target.files?.[0];
+                        if (f) uploadVideo(f);
+                        e.target.value = "";
+                      }}
+                    />
+                    {uploadingVideo ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <>
+                        <Video className="h-4 w-4" />
+                        <span>Enviar vídeo (máx. 1 min, {MAX_VIDEO_MB} MB)</span>
+                      </>
+                    )}
+                  </label>
+                )}
               </div>
               <div className="flex items-center justify-between rounded-lg border border-border p-3">
                 <div>

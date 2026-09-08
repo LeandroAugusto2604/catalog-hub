@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Plus } from "lucide-react";
+import { Plus, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCart, formatBRL } from "@/lib/cart";
 import { toast } from "sonner";
@@ -11,6 +11,7 @@ export interface ProductCardData {
   price: number;
   image_url: string | null;
   image_urls?: string[] | null;
+  video_url?: string | null;
 }
 
 export function ProductCard({ product }: { product: ProductCardData }) {
@@ -23,15 +24,29 @@ export function ProductCard({ product }: { product: ProductCardData }) {
         ? [product.image_url]
         : [];
 
+  const media: { type: "image" | "video"; url: string }[] = [
+    ...images.map((url) => ({ type: "image" as const, url })),
+    ...(product.video_url ? [{ type: "video" as const, url: product.video_url }] : []),
+  ];
+
   const [active, setActive] = useState(0);
-  const cover = images[active];
+  const current = media[active];
+  const cover = images[0];
 
   return (
     <div className="card-elevated rounded-2xl overflow-hidden flex flex-col group">
       <div className="aspect-square bg-muted relative overflow-hidden">
-        {cover ? (
+        {current?.type === "video" ? (
+          <video
+            src={current.url}
+            controls
+            playsInline
+            preload="metadata"
+            className="w-full h-full object-cover bg-black"
+          />
+        ) : current ? (
           <img
-            src={cover}
+            src={current.url}
             alt={product.name}
             loading="lazy"
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
@@ -41,9 +56,9 @@ export function ProductCard({ product }: { product: ProductCardData }) {
             Sem imagem
           </div>
         )}
-        {images.length > 1 && (
+        {media.length > 1 && current?.type !== "video" && (
           <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5">
-            {images.map((_, i) => (
+            {media.map((_, i) => (
               <button
                 key={i}
                 type="button"
@@ -60,18 +75,24 @@ export function ProductCard({ product }: { product: ProductCardData }) {
           </div>
         )}
       </div>
-      {images.length > 1 && (
+      {media.length > 1 && (
         <div className="px-3 pt-3 flex gap-1.5 overflow-x-auto">
-          {images.map((url, i) => (
+          {media.map((m, i) => (
             <button
-              key={url + i}
+              key={m.url + i}
               type="button"
               onClick={() => setActive(i)}
               className={`h-12 w-12 rounded-md overflow-hidden flex-shrink-0 border-2 transition ${
                 i === active ? "border-primary" : "border-transparent opacity-70 hover:opacity-100"
               }`}
             >
-              <img src={url} alt="" className="w-full h-full object-cover" />
+              {m.type === "video" ? (
+                <span className="w-full h-full flex items-center justify-center bg-black/70 text-white">
+                  <Play className="h-4 w-4" />
+                </span>
+              ) : (
+                <img src={m.url} alt="" className="w-full h-full object-cover" />
+              )}
             </button>
           ))}
         </div>
