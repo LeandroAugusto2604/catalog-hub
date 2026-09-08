@@ -45,16 +45,23 @@ export const Route = createFileRoute("/api/send-quote-email")({
           }
           const quote_id = crypto.randomUUID();
 
-          const SUPABASE_URL = process.env.SUPABASE_URL;
-          const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
-          if (!SUPABASE_URL || !SERVICE_KEY) {
+          const SUPABASE_URL = process.env.SUPABASE_URL ?? process.env.VITE_SUPABASE_URL;
+          // A chave de serviço é opcional: sem ela usamos a chave pública, que
+          // tem permissão apenas para CRIAR orçamentos (nunca para ler).
+          const SUPABASE_KEY =
+            process.env.SUPABASE_SERVICE_ROLE_KEY ||
+            process.env.SUPABASE_PUBLISHABLE_KEY ||
+            process.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+          if (!SUPABASE_URL || !SUPABASE_KEY) {
             return Response.json(
               { error: "Supabase não configurado" },
               { status: 500 }
             );
           }
 
-          const supabase = createClient(SUPABASE_URL, SERVICE_KEY);
+          const supabase = createClient(SUPABASE_URL, SUPABASE_KEY, {
+            auth: { persistSession: false, autoRefreshToken: false },
+          });
 
           const { error: insertQuoteError } = await supabase.from("quotes").insert({
             id: quote_id,
@@ -77,22 +84,11 @@ export const Route = createFileRoute("/api/send-quote-email")({
           );
           if (insertItemsError) throw insertItemsError;
 
-          const { data: quote, error: qe } = await supabase
-            .from("quotes")
-            .select("*")
-            .eq("id", quote_id)
-            .single();
-          if (qe || !quote) {
-            return Response.json(
-              { error: "Orçamento não encontrado" },
-              { status: 404 }
-            );
-          }
+          // Usamos os dados já validados (não relemos o banco, pois a leitura
+          // de orçamentos é restrita ao administrador).
+          const quote = parsed.data;
+          const items = parsed.data.items;
 
-          const { data: items } = await supabase
-            .from("quote_items")
-            .select("*")
-            .eq("quote_id", quote_id);
 
           const SMTP_HOST = process.env.SMTP_HOST;
           const SMTP_PORT = Number(process.env.SMTP_PORT ?? 587);

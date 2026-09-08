@@ -17,17 +17,12 @@ No painel onde o domínio `dev-prod.cloud` está registrado, crie:
 
 Espere alguns minutos até o domínio responder.
 
-## 2. Criar o seu banco no Supabase
+## 2. Banco de dados — nada a fazer
 
-Siga o guia **MIGRACAO-SUPABASE.md**. Resumo:
+A VPS vai usar o mesmo banco de hoje, com os seus produtos, pedidos, login e fotos.
+Os dados de acesso já estão prontos no arquivo do passo 4.
 
-1. Crie um projeto novo em supabase.com (região South America).
-2. Em **Storage**, crie dois espaços públicos: `product-images` e `products`.
-3. Em **SQL Editor**, cole todo o conteúdo de `deploy/supabase-schema.sql` e clique em Run.
-4. Em **Authentication → URL Configuration**: Site URL `https://tudotop.dev-prod.cloud`
-   e Redirect URLs `https://tudotop.dev-prod.cloud/**`.
-5. Em **Project Settings → API**, copie: a URL do projeto, a chave `anon/publishable`
-   e a chave `service_role`.
+Se algum dia você quiser um banco só seu, o guia **MIGRACAO-SUPABASE.md** explica como.
 
 ## 3. Preparar a VPS
 
@@ -42,27 +37,23 @@ bash deploy/setup-vps.sh
 
 Isso instala tudo que o site precisa e já configura o Nginx para o seu domínio.
 
-## 4. Preencher as configurações
+## 4. Configurações (já vêm prontas)
+
+Basta copiar o arquivo pronto:
 
 ```bash
-cp .env.example .env
-nano .env
+cp deploy/env-vps.txt .env
 ```
 
-Preencha com os valores do passo 2:
+Ele já vem preenchido com o banco, o login e as fotos que o site usa hoje —
+seus produtos e pedidos aparecem na VPS sem precisar migrar nada.
+Nada mais precisa ser digitado agora.
 
-| Campo | O que colocar |
-| ----- | ------------- |
-| `SUPABASE_URL` e `VITE_SUPABASE_URL` | a URL do seu projeto, ex. `https://abcdef.supabase.co` |
-| `SUPABASE_PUBLISHABLE_KEY` e `VITE_SUPABASE_PUBLISHABLE_KEY` | a chave `anon/publishable` |
-| `SUPABASE_SERVICE_ROLE_KEY` | a chave `service_role` (nunca compartilhe) |
-| `VITE_SUPABASE_PROJECT_ID` | o pedaço do meio da URL, ex. `abcdef` |
-| `PORT` | `3000` |
-| `SITE_URL` | `https://tudotop.dev-prod.cloud` |
-| `ADMIN_EMAIL` | `leandro_cjc@hotmail.com` |
-| Campos `SMTP_*` | deixe em branco por enquanto |
+Só edite (`nano .env`) quando quiser ativar o e-mail dos orçamentos: preencha os
+campos `SMTP_*` e rode `bash deploy/atualizar.sh`.
 
-Salve com `Ctrl+O`, `Enter`, `Ctrl+X`.
+> Quiser usar a sua própria conta Supabase no futuro? Siga o **MIGRACAO-SUPABASE.md**
+> e troque no `.env` os valores de endereço, chave pública e identificador do projeto.
 
 > **E-mail dos orçamentos:** com os campos `SMTP_*` em branco, o pedido do cliente
 > é salvo e aparece em `/admin/quotes` normalmente, só não sai e-mail. Quando você
