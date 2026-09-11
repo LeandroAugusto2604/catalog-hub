@@ -14,6 +14,24 @@ export type Database = {
   }
   public: {
     Tables: {
+      app_secrets: {
+        Row: {
+          created_at: string
+          key: string
+          value: string
+        }
+        Insert: {
+          created_at?: string
+          key: string
+          value: string
+        }
+        Update: {
+          created_at?: string
+          key?: string
+          value?: string
+        }
+        Relationships: []
+      }
       categories: {
         Row: {
           created_at: string
@@ -32,6 +50,117 @@ export type Database = {
           id?: string
           name?: string
           slug?: string
+        }
+        Relationships: []
+      }
+      order_items: {
+        Row: {
+          id: string
+          order_id: string
+          product_id: string | null
+          product_name: string
+          quantity: number
+          unit_price: number
+        }
+        Insert: {
+          id?: string
+          order_id: string
+          product_id?: string | null
+          product_name: string
+          quantity: number
+          unit_price: number
+        }
+        Update: {
+          id?: string
+          order_id?: string
+          product_id?: string | null
+          product_name?: string
+          quantity?: number
+          unit_price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_items_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orders: {
+        Row: {
+          bairro: string
+          cep: string
+          cidade: string
+          complemento: string | null
+          created_at: string
+          customer_name: string
+          email: string
+          id: string
+          mp_payment_id: string | null
+          mp_preference_id: string | null
+          notes: string | null
+          numero: string
+          payment_method: string | null
+          rua: string
+          shipping_status: string
+          status: string
+          total: number
+          uf: string
+          updated_at: string
+          whatsapp: string
+        }
+        Insert: {
+          bairro: string
+          cep: string
+          cidade: string
+          complemento?: string | null
+          created_at?: string
+          customer_name: string
+          email: string
+          id?: string
+          mp_payment_id?: string | null
+          mp_preference_id?: string | null
+          notes?: string | null
+          numero: string
+          payment_method?: string | null
+          rua: string
+          shipping_status?: string
+          status?: string
+          total?: number
+          uf: string
+          updated_at?: string
+          whatsapp: string
+        }
+        Update: {
+          bairro?: string
+          cep?: string
+          cidade?: string
+          complemento?: string | null
+          created_at?: string
+          customer_name?: string
+          email?: string
+          id?: string
+          mp_payment_id?: string | null
+          mp_preference_id?: string | null
+          notes?: string | null
+          numero?: string
+          payment_method?: string | null
+          rua?: string
+          shipping_status?: string
+          status?: string
+          total?: number
+          uf?: string
+          updated_at?: string
+          whatsapp?: string
         }
         Relationships: []
       }
@@ -204,6 +333,26 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      confirm_order_payment: {
+        Args: {
+          _mp_payment_id: string
+          _order_id: string
+          _payment_method: string
+          _status: string
+          _token: string
+        }
+        Returns: boolean
+      }
+      get_order_status: {
+        Args: { _order_id: string }
+        Returns: {
+          created_at: string
+          customer_name: string
+          id: string
+          status: string
+          total: number
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
