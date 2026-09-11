@@ -15,9 +15,11 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as ProdutoIdRouteImport } from './routes/produto.$id'
+import { Route as PedidoIdRouteImport } from './routes/pedido.$id'
 import { Route as ApiSendQuoteEmailRouteImport } from './routes/api.send-quote-email'
 import { Route as ApiCreatePaymentRouteImport } from './routes/api.create-payment'
 import { Route as AdminQuotesRouteImport } from './routes/admin.quotes'
+import { Route as AdminOrdersRouteImport } from './routes/admin.orders'
 import { Route as ApiPublicMercadopagoWebhookRouteImport } from './routes/api/public/mercadopago-webhook'
 
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
@@ -50,6 +52,11 @@ const ProdutoIdRoute = ProdutoIdRouteImport.update({
   path: '/produto/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PedidoIdRoute = PedidoIdRouteImport.update({
+  id: '/pedido/$id',
+  path: '/pedido/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiSendQuoteEmailRoute = ApiSendQuoteEmailRouteImport.update({
   id: '/api/send-quote-email',
   path: '/api/send-quote-email',
@@ -65,6 +72,11 @@ const AdminQuotesRoute = AdminQuotesRouteImport.update({
   path: '/quotes',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminOrdersRoute = AdminOrdersRouteImport.update({
+  id: '/orders',
+  path: '/orders',
+  getParentRoute: () => AdminRoute,
+} as any)
 const ApiPublicMercadopagoWebhookRoute =
   ApiPublicMercadopagoWebhookRouteImport.update({
     id: '/api/public/mercadopago-webhook',
@@ -77,9 +89,11 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/admin/orders': typeof AdminOrdersRoute
   '/admin/quotes': typeof AdminQuotesRoute
   '/api/create-payment': typeof ApiCreatePaymentRoute
   '/api/send-quote-email': typeof ApiSendQuoteEmailRoute
+  '/pedido/$id': typeof PedidoIdRoute
   '/produto/$id': typeof ProdutoIdRoute
   '/admin/': typeof AdminIndexRoute
   '/api/public/mercadopago-webhook': typeof ApiPublicMercadopagoWebhookRoute
@@ -88,9 +102,11 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/admin/orders': typeof AdminOrdersRoute
   '/admin/quotes': typeof AdminQuotesRoute
   '/api/create-payment': typeof ApiCreatePaymentRoute
   '/api/send-quote-email': typeof ApiSendQuoteEmailRoute
+  '/pedido/$id': typeof PedidoIdRoute
   '/produto/$id': typeof ProdutoIdRoute
   '/admin': typeof AdminIndexRoute
   '/api/public/mercadopago-webhook': typeof ApiPublicMercadopagoWebhookRoute
@@ -101,9 +117,11 @@ export interface FileRoutesById {
   '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/admin/orders': typeof AdminOrdersRoute
   '/admin/quotes': typeof AdminQuotesRoute
   '/api/create-payment': typeof ApiCreatePaymentRoute
   '/api/send-quote-email': typeof ApiSendQuoteEmailRoute
+  '/pedido/$id': typeof PedidoIdRoute
   '/produto/$id': typeof ProdutoIdRoute
   '/admin/': typeof AdminIndexRoute
   '/api/public/mercadopago-webhook': typeof ApiPublicMercadopagoWebhookRoute
@@ -115,9 +133,11 @@ export interface FileRouteTypes {
     | '/admin'
     | '/auth'
     | '/reset-password'
+    | '/admin/orders'
     | '/admin/quotes'
     | '/api/create-payment'
     | '/api/send-quote-email'
+    | '/pedido/$id'
     | '/produto/$id'
     | '/admin/'
     | '/api/public/mercadopago-webhook'
@@ -126,9 +146,11 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/reset-password'
+    | '/admin/orders'
     | '/admin/quotes'
     | '/api/create-payment'
     | '/api/send-quote-email'
+    | '/pedido/$id'
     | '/produto/$id'
     | '/admin'
     | '/api/public/mercadopago-webhook'
@@ -138,9 +160,11 @@ export interface FileRouteTypes {
     | '/admin'
     | '/auth'
     | '/reset-password'
+    | '/admin/orders'
     | '/admin/quotes'
     | '/api/create-payment'
     | '/api/send-quote-email'
+    | '/pedido/$id'
     | '/produto/$id'
     | '/admin/'
     | '/api/public/mercadopago-webhook'
@@ -153,6 +177,7 @@ export interface RootRouteChildren {
   ResetPasswordRoute: typeof ResetPasswordRoute
   ApiCreatePaymentRoute: typeof ApiCreatePaymentRoute
   ApiSendQuoteEmailRoute: typeof ApiSendQuoteEmailRoute
+  PedidoIdRoute: typeof PedidoIdRoute
   ProdutoIdRoute: typeof ProdutoIdRoute
   ApiPublicMercadopagoWebhookRoute: typeof ApiPublicMercadopagoWebhookRoute
 }
@@ -201,6 +226,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProdutoIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/pedido/$id': {
+      id: '/pedido/$id'
+      path: '/pedido/$id'
+      fullPath: '/pedido/$id'
+      preLoaderRoute: typeof PedidoIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/send-quote-email': {
       id: '/api/send-quote-email'
       path: '/api/send-quote-email'
@@ -222,6 +254,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminQuotesRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/orders': {
+      id: '/admin/orders'
+      path: '/orders'
+      fullPath: '/admin/orders'
+      preLoaderRoute: typeof AdminOrdersRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/api/public/mercadopago-webhook': {
       id: '/api/public/mercadopago-webhook'
       path: '/api/public/mercadopago-webhook'
@@ -233,11 +272,13 @@ declare module '@tanstack/react-router' {
 }
 
 interface AdminRouteChildren {
+  AdminOrdersRoute: typeof AdminOrdersRoute
   AdminQuotesRoute: typeof AdminQuotesRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminOrdersRoute: AdminOrdersRoute,
   AdminQuotesRoute: AdminQuotesRoute,
   AdminIndexRoute: AdminIndexRoute,
 }
@@ -251,6 +292,7 @@ const rootRouteChildren: RootRouteChildren = {
   ResetPasswordRoute: ResetPasswordRoute,
   ApiCreatePaymentRoute: ApiCreatePaymentRoute,
   ApiSendQuoteEmailRoute: ApiSendQuoteEmailRoute,
+  PedidoIdRoute: PedidoIdRoute,
   ProdutoIdRoute: ProdutoIdRoute,
   ApiPublicMercadopagoWebhookRoute: ApiPublicMercadopagoWebhookRoute,
 }

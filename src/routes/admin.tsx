@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { useAuth } from "@/lib/use-auth";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
-import { LogOut, Package, FileText, Home, Loader2, ShieldAlert } from "lucide-react";
+import { LogOut, Package, FileText, Home, Loader2, ShieldAlert, CreditCard } from "lucide-react";
 import { Toaster } from "sonner";
 
 export const Route = createFileRoute("/admin")({
@@ -60,6 +60,7 @@ function AdminLayout() {
 
   const isProducts = loc.pathname === "/admin" || loc.pathname.startsWith("/admin/products");
   const isQuotes = loc.pathname.startsWith("/admin/quotes");
+  const isOrders = loc.pathname.startsWith("/admin/orders");
 
   return (
     <div className="min-h-screen">
@@ -83,6 +84,11 @@ function AdminLayout() {
             <Link to="/admin/quotes">
               <Button variant={isQuotes ? "default" : "ghost"} size="sm" className={isQuotes ? "btn-glow border-0" : ""}>
                 <FileText className="h-4 w-4 sm:mr-2" /> <span className="hidden sm:inline">Pedidos</span>
+              </Button>
+            </Link>
+            <Link to="/admin/orders">
+              <Button variant={isOrders ? "default" : "ghost"} size="sm" className={isOrders ? "btn-glow border-0" : ""}>
+                <CreditCard className="h-4 w-4 sm:mr-2" /> <span className="hidden sm:inline">Pagos</span>
               </Button>
             </Link>
             <Link to="/">
