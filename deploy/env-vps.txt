@@ -32,3 +32,13 @@ SMTP_SECURE="true"
 SMTP_USER="loja@dev-prod.cloud"
 SMTP_PASS="Huawei@2026*"
 SMTP_FROM="Tudo Top <loja@dev-prod.cloud>"
+
+# ---- Pagamento online (Mercado Pago: Pix + cartão) ----
+# Cole aqui as credenciais da sua conta Mercado Pago
+# (painel do Mercado Pago > Suas integrações > Credenciais).
+# Comece com as de TESTE, valide, depois troque pelas de PRODUÇÃO.
+MP_ACCESS_TOKEN=""
+VITE_MP_PUBLIC_KEY=""
+
+# Senha interna já configurada no banco — NÃO altere.
+ORDER_WEBHOOK_TOKEN="tt_9f4c1e77a2b54d3e8c06ab715d2f8e41"
