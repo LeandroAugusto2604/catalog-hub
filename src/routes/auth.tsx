@@ -21,10 +21,9 @@ export const Route = createFileRoute("/auth")({
 
 function Auth() {
   const nav = useNavigate();
-  const [mode, setMode] = useState<"login" | "signup" | "forgot">("login");
+  const [mode, setMode] = useState<"login" | "forgot">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -43,18 +42,6 @@ function Auth() {
         });
         if (error) throw error;
         toast.success("Enviamos um link de redefinição para o seu e-mail.");
-        setMode("login");
-      } else if (mode === "signup") {
-        const { error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            emailRedirectTo: `${window.location.origin}/admin`,
-            data: { full_name: name },
-          },
-        });
-        if (error) throw error;
-        toast.success("Conta criada! Você já pode entrar.");
         setMode("login");
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
@@ -85,18 +72,12 @@ function Auth() {
             C
           </div>
           <h1 className="text-2xl font-bold">
-            {mode === "login" ? "Entrar" : mode === "signup" ? "Criar conta" : "Recuperar senha"}
+            {mode === "login" ? "Entrar" : "Recuperar senha"}
           </h1>
           <p className="text-sm text-muted-foreground mt-1">Painel administrativo</p>
         </div>
 
         <form onSubmit={submit} className="space-y-4">
-          {mode === "signup" && (
-            <div className="space-y-2">
-              <Label htmlFor="n">Nome</Label>
-              <Input id="n" value={name} onChange={(e) => setName(e.target.value)} required />
-            </div>
-          )}
           <div className="space-y-2">
             <Label htmlFor="e">E-mail</Label>
             <Input id="e" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
@@ -119,18 +100,9 @@ function Auth() {
               ? "Aguarde..."
               : mode === "login"
                 ? "Entrar"
-                : mode === "signup"
-                  ? "Criar conta"
-                  : "Enviar link de redefinição"}
+                : "Enviar link de redefinição"}
           </Button>
         </form>
-
-        <button
-          onClick={() => setMode(mode === "login" ? "signup" : "login")}
-          className="mt-4 text-sm text-muted-foreground hover:text-primary w-full text-center"
-        >
-          {mode === "login" ? "Não tem conta? Criar conta" : "Já tem conta? Entrar"}
-        </button>
 
         <button
           onClick={() => setMode(mode === "forgot" ? "login" : "forgot")}
@@ -139,9 +111,6 @@ function Auth() {
           {mode === "forgot" ? "Voltar ao login" : "Esqueci minha senha"}
         </button>
 
-        <p className="mt-6 text-xs text-muted-foreground text-center">
-          Para se tornar admin, crie a conta e peça ao proprietário do sistema para promover seu usuário.
-        </p>
       </Card>
     </div>
   );

@@ -8,7 +8,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Loader2, Mail, MessageCircle, ChevronDown, MapPin } from "lucide-react";
+import { Loader2, Mail, MessageCircle, ChevronDown, MapPin, Trash2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { formatBRL } from "@/lib/cart";
 
@@ -76,6 +77,19 @@ function OrdersAdmin() {
     if (error) return toast.error(error.message);
     toast.success("Entrega atualizada");
     setOrders((os) => os.map((o) => (o.id === id ? { ...o, shipping_status } : o)));
+  };
+
+  const removeOrder = async (id: string, name: string) => {
+    if (!confirm(`Remover o pedido de ${name}? Essa ação não pode ser desfeita.`)) return;
+    const { error: itemsError } = await supabase
+      .from("order_items")
+      .delete()
+      .eq("order_id", id);
+    if (itemsError) return toast.error(itemsError.message);
+    const { error } = await supabase.from("orders").delete().eq("id", id);
+    if (error) return toast.error(error.message);
+    toast.success("Pedido removido");
+    setOrders((os) => os.filter((o) => o.id !== id));
   };
 
   const statusColor = (s: string) =>
@@ -199,7 +213,7 @@ function OrdersAdmin() {
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-wrap">
                     <span className="text-xs text-muted-foreground">Entrega:</span>
                     <Select
                       value={o.shipping_status}
@@ -216,6 +230,15 @@ function OrdersAdmin() {
                         ))}
                       </SelectContent>
                     </Select>
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      className="h-8 ml-auto"
+                      onClick={() => removeOrder(o.id, o.customer_name)}
+                    >
+                      <Trash2 className="h-4 w-4 mr-1" />
+                      Remover pedido
+                    </Button>
                   </div>
                 </div>
               )}
