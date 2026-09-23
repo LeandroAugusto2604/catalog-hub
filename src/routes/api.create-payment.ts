@@ -8,6 +8,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import nodemailer from "nodemailer";
 import { z } from "zod";
 import { quoteShipping } from "@/lib/shipping.server";
+import { businessDaysDate } from "@/lib/delivery";
 import { getPublicSupabase } from "@/lib/supabase-public.server";
 
 const bodySchema = z.object({
@@ -218,7 +219,7 @@ export const Route = createFileRoute("/api/create-payment")({
               const transporter = nodemailer.createTransport({
                 host: SMTP_HOST,
                 port: Number(process.env.SMTP_PORT ?? 587),
-                secure: process.env.SMTP_SECURE === "true",
+                secure: process.env.SMTP_SECURE === "true" || Number(process.env.SMTP_PORT ?? 587) === 465,
                 auth: { user: SMTP_USER, pass: SMTP_PASS },
               });
               const SMTP_FROM = process.env.SMTP_FROM ?? `Catálogo <${SMTP_USER}>`;
@@ -249,6 +250,7 @@ export const Route = createFileRoute("/api/create-payment")({
                     ${table}
                     <h3 style="font-size:15px;margin:24px 0 8px">Entrega</h3>
                     <p style="font-size:14px;color:#444">${address}</p>
+                    <p style="font-size:14px">Frete: <strong style="color:#16a34a">grátis</strong> (${ship.name})<br>Previsão de entrega: <strong>${businessDaysDate(ship.days)}</strong> <span style="color:#666;font-size:12px">(após a confirmação do pagamento)</span></p>
                     ${contactBlock}
                     <p style="font-size:12px;color:#666;margin-top:24px">Pedido nº ${order_id}</p>
                   `),
@@ -268,6 +270,7 @@ export const Route = createFileRoute("/api/create-payment")({
                     ${table}
                     <h3 style="font-size:15px;margin:24px 0 8px">Endereço de entrega</h3>
                     <p style="font-size:14px;color:#444">${address}</p>
+                    <p style="font-size:14px">Frete ${ship.name} — previsão: <strong>${businessDaysDate(ship.days)}</strong></p>
                     ${data.notes ? `<p style="background:#f5f5f5;padding:12px;border-radius:8px"><strong>Observações:</strong><br>${data.notes}</p>` : ""}
                     <p style="font-size:12px;color:#666;margin-top:24px">Pedido nº ${order_id}</p>
                   `),
