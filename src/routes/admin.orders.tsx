@@ -8,7 +8,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Loader2, Mail, MessageCircle, ChevronDown, MapPin } from "lucide-react";
+import { Loader2, Mail, MessageCircle, ChevronDown, MapPin, Trash2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { formatBRL } from "@/lib/cart";
 
