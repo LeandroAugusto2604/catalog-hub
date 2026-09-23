@@ -100,18 +100,9 @@ function Auth() {
               ? "Aguarde..."
               : mode === "login"
                 ? "Entrar"
-                : mode === "signup"
-                  ? "Criar conta"
-                  : "Enviar link de redefinição"}
+                : "Enviar link de redefinição"}
           </Button>
         </form>
-
-        <button
-          onClick={() => setMode(mode === "login" ? "signup" : "login")}
-          className="mt-4 text-sm text-muted-foreground hover:text-primary w-full text-center"
-        >
-          {mode === "login" ? "Não tem conta? Criar conta" : "Já tem conta? Entrar"}
-        </button>
 
         <button
           onClick={() => setMode(mode === "forgot" ? "login" : "forgot")}
