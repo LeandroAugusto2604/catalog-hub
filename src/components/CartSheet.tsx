@@ -49,7 +49,7 @@ export function CartSheet({ open, onOpenChange }: Props) {
   const clear = useCart((s) => s.clear);
   const total = useCart((s) => s.items.reduce((a, i) => a + i.price * i.quantity, 0));
 
-  const [mode, setMode] = useState<"quote" | "buy">("quote");
+  const [mode, setMode] = useState<"buy" | "quote">("buy");
   const [form, setForm] = useState({ customer_name: "", whatsapp: "", email: "", notes: "" });
   const [address, setAddress] = useState({
     cep: "",
