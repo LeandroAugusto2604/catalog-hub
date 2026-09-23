@@ -126,7 +126,7 @@ export function CartSheet({ open, onOpenChange }: Props) {
 
       toast.success("Orçamento enviado! Entraremos em contato em breve.");
       clear();
-      setForm({ customer_name: "", whatsapp: "", email: "", notes: "" });
+      setForm({ customer_name: "", whatsapp: "", email: "", notes: "", cpf: "" });
       onOpenChange(false);
     } catch (err: any) {
       console.error(err);
