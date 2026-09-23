@@ -80,12 +80,14 @@ export const Route = createFileRoute("/api/public/mercadopago-webhook")({
           if (error) console.error("[mp-webhook] update falhou:", error.message);
 
           if (status === "pago") {
+            let shipData: any = null;
             try {
               // Dados do pedido via função protegida por token no banco.
-              const { data: shipData } = await supabase.rpc(
+              const r = await supabase.rpc(
                 "get_order_for_shipping",
                 { _token: expected, _order_id: orderId }
               );
+              shipData = r.data;
               if (shipData?.order && !shipData.order.superfrete_id) {
                 const { createSuperFreteOrder } = await import(
                   "@/lib/shipping.server"
@@ -111,14 +113,29 @@ export const Route = createFileRoute("/api/public/mercadopago-webhook")({
             const SMTP_PASS = process.env.SMTP_PASS;
             const ADMIN_EMAIL =
               process.env.ADMIN_EMAIL ?? "leandro_cjc@hotmail.com";
-            const customerEmail = payment?.payer?.email;
+            const customerEmail = shipData?.order?.email || payment?.payer?.email;
+            const days = Number(shipData?.order?.shipping_days ?? 0);
+            let deliveryText = "";
+            if (days > 0) {
+              const d = new Date();
+              let left = days;
+              while (left > 0) {
+                d.setDate(d.getDate() + 1);
+                const w = d.getDay();
+                if (w !== 0 && w !== 6) left--;
+              }
+              deliveryText = d.toLocaleDateString("pt-BR", { weekday: "long", day: "2-digit", month: "2-digit", year: "numeric", timeZone: "America/Sao_Paulo" });
+            }
+            const firstName = String(shipData?.order?.customer_name ?? "").split(" ")[0];
             const amount = Number(payment?.transaction_amount ?? 0);
 
             if (SMTP_HOST && SMTP_USER && SMTP_PASS) {
               const transporter = nodemailer.createTransport({
                 host: SMTP_HOST,
                 port: Number(process.env.SMTP_PORT ?? 587),
-                secure: process.env.SMTP_SECURE === "true",
+                secure:
+                  process.env.SMTP_SECURE === "true" ||
+                  Number(process.env.SMTP_PORT ?? 587) === 465,
                 auth: { user: SMTP_USER, pass: SMTP_PASS },
               });
               const SMTP_FROM =
@@ -126,7 +143,7 @@ export const Route = createFileRoute("/api/public/mercadopago-webhook")({
               const wrap = (inner: string) =>
                 `<div style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto;padding:24px;background:#fff;color:#111">${inner}</div>`;
 
-              await Promise.allSettled([
+              const results = await Promise.allSettled([
                 customerEmail
                   ? transporter.sendMail({
                       from: SMTP_FROM,
@@ -135,7 +152,9 @@ export const Route = createFileRoute("/api/public/mercadopago-webhook")({
                       subject: "Pagamento confirmado — seu pedido está a caminho",
                       html: wrap(`
                         <h2 style="color:#ea580c;margin:0 0 16px">Pagamento confirmado</h2>
-                        <p>Recebemos seu pagamento de <strong>${fmt(amount)}</strong>. Já estamos preparando o envio e entraremos em contato com os detalhes da entrega.</p>
+                        <p>${firstName ? `Olá, ${firstName}! ` : ""}Recebemos seu pagamento de <strong>${fmt(amount)}</strong>. Já estamos preparando o envio.</p>
+                        ${deliveryText ? `<p>Frete: <strong>grátis</strong>${shipData?.order?.shipping_service ? ` (${shipData.order.shipping_service})` : ""}<br>Previsão de entrega: <strong>${deliveryText}</strong></p>` : ""}
+                        <p>Dúvidas? Fale com a gente no WhatsApp (11) 93746-0073.</p>
                         <p style="font-size:12px;color:#666;margin-top:24px">Pedido nº ${orderId}</p>
                       `),
                     })
@@ -152,6 +171,9 @@ export const Route = createFileRoute("/api/public/mercadopago-webhook")({
                   `),
                 }),
               ]);
+              results.forEach((r) => {
+                if (r.status === "rejected") console.error("[mp-webhook] email:", r.reason);
+              });
             }
           }
 

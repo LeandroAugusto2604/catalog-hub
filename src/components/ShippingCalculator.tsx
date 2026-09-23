@@ -19,6 +19,17 @@ interface Props {
   onSelect?: (o: ShippingOption) => void;
 }
 
+export function deliveryDateLabel(days: number, from = new Date()) {
+  const d = new Date(from);
+  let left = Math.max(0, Math.round(days));
+  while (left > 0) {
+    d.setDate(d.getDate() + 1);
+    const w = d.getDay();
+    if (w !== 0 && w !== 6) left--;
+  }
+  return d.toLocaleDateString("pt-BR", { weekday: "long", day: "2-digit", month: "2-digit" });
+}
+
 export function ShippingCalculator({ items, cep: extCep, onCepChange, selectedId, onSelect }: Props) {
   const [localCep, setLocalCep] = useState("");
   const cep = extCep ?? localCep;
@@ -80,7 +91,7 @@ export function ShippingCalculator({ items, cep: extCep, onCepChange, selectedId
       {error && <p className="text-xs text-destructive">{error}</p>}
       {options && options.length > 0 && (
         <div className="space-y-1.5">
-          {options.map((o) => {
+          {options.slice(0, 1).map((o) => {
             const active = selectedId === o.id;
             const Tag = onSelect ? "button" : "div";
             return (
@@ -95,7 +106,7 @@ export function ShippingCalculator({ items, cep: extCep, onCepChange, selectedId
                 <span>
                   <span className="font-medium">{o.name}</span>
                   <span className="block text-xs text-muted-foreground">
-                    Chega em até {o.days} {o.days === 1 ? "dia útil" : "dias úteis"}
+                    Previsão de entrega: {deliveryDateLabel(o.days)}
                   </span>
                 </span>
                 <span className="font-semibold text-primary">Frete grátis</span>
