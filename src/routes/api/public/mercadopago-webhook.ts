@@ -89,21 +89,26 @@ export const Route = createFileRoute("/api/public/mercadopago-webhook")({
                 { _token: expected, _order_id: orderId }
               );
               shipData = r.data;
-              if (shipData?.order && !shipData.order.superfrete_id) {
-                const { createSuperFreteOrder } = await import(
-                  "@/lib/shipping.server"
-                );
-                const sfId = await createSuperFreteOrder(
-                  shipData.order,
-                  shipData.items ?? [],
-                  String(payment?.payer?.identification?.number ?? "")
-                );
-                if (sfId) {
+              const claim = shipData?.order && !shipData.order.superfrete_id
+                ? await supabase.rpc("claim_superfrete" as any, { _token: expected, _order_id: orderId })
+                : null;
+              if (claim?.data === true) {
+                try {
+                  const { createSuperFreteOrder } = await import("@/lib/shipping.server");
+                  const sfId = await createSuperFreteOrder(
+                    { ...shipData.order, superfrete_id: null },
+                    shipData.items ?? [],
+                    String(payment?.payer?.identification?.number ?? "")
+                  );
+                  if (!sfId) throw new Error("sem id");
                   await supabase.rpc("set_superfrete_id", {
                     _token: expected,
                     _order_id: orderId,
                     _sf_id: sfId,
                   });
+                } catch (e) {
+                  await supabase.rpc("release_superfrete" as any, { _token: expected, _order_id: orderId });
+                  throw e;
                 }
               }
             } catch (e) {

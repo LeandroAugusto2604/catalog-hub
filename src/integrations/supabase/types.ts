@@ -363,6 +363,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      claim_superfrete: {
+        Args: { _order_id: string; _token: string }
+        Returns: boolean
+      }
       confirm_order_payment: {
         Args: {
           _mp_payment_id: string
@@ -392,6 +396,10 @@ export type Database = {
           _role: Database["public"]["Enums"]["app_role"]
           _user_id: string
         }
+        Returns: boolean
+      }
+      release_superfrete: {
+        Args: { _order_id: string; _token: string }
         Returns: boolean
       }
       set_superfrete_id: {
