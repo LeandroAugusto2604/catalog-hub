@@ -72,18 +72,12 @@ function Auth() {
             C
           </div>
           <h1 className="text-2xl font-bold">
-            {mode === "login" ? "Entrar" : mode === "signup" ? "Criar conta" : "Recuperar senha"}
+            {mode === "login" ? "Entrar" : "Recuperar senha"}
           </h1>
           <p className="text-sm text-muted-foreground mt-1">Painel administrativo</p>
         </div>
 
         <form onSubmit={submit} className="space-y-4">
-          {mode === "signup" && (
-            <div className="space-y-2">
-              <Label htmlFor="n">Nome</Label>
-              <Input id="n" value={name} onChange={(e) => setName(e.target.value)} required />
-            </div>
-          )}
           <div className="space-y-2">
             <Label htmlFor="e">E-mail</Label>
             <Input id="e" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
