@@ -4,9 +4,10 @@
 // protegidas por token no banco.
 import { createClient } from "@supabase/supabase-js";
 
-let _client: ReturnType<typeof createClient> | undefined;
+let _client: ReturnType<typeof createClient<any>> | undefined;
 
-export function getPublicSupabase() {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function getPublicSupabase(): ReturnType<typeof createClient<any>> {
   if (_client) return _client;
   const url =
     process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
@@ -15,7 +16,7 @@ export function getPublicSupabase() {
     process.env.VITE_SUPABASE_PUBLISHABLE_KEY ||
     process.env.SUPABASE_ANON_KEY;
   if (!url || !key) throw new Error("Configuração do banco ausente");
-  _client = createClient(url, key, {
+  _client = createClient<any>(url, key, {
     auth: { persistSession: false, autoRefreshToken: false },
   });
   return _client;

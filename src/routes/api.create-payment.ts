@@ -115,41 +115,6 @@ export const Route = createFileRoute("/api/create-payment")({
           }
           const subtotal = lines.reduce((a, l) => a + l.unit_price * l.quantity, 0);
           const total = subtotal; // frete grátis para o cliente (custo pago pela loja)
-          const order_id = crypto.randomUUID();
-
-          const { error: orderError } = await supabase.from("orders").insert({
-            id: order_id,
-            customer_name: data.customer_name,
-            whatsapp: data.whatsapp,
-            email: data.email,
-            notes: data.notes ?? null,
-            cep: data.cep,
-            rua: data.rua,
-            numero: data.numero,
-            complemento: data.complemento ?? null,
-            bairro: data.bairro,
-            cidade: data.cidade,
-            uf: data.uf.toUpperCase(),
-            total,
-            shipping_price: ship.price,
-            shipping_service: ship.name,
-            shipping_days: ship.days,
-            shipping_service_id: ship.id,
-            status: "pendente",
-          });
-          if (orderError) throw orderError;
-
-          const { error: itemsError } = await supabase.from("order_items").insert(
-            lines.map((l) => ({
-              order_id,
-              product_id: l.product_id,
-              product_name: l.product_name,
-              unit_price: l.unit_price,
-              quantity: l.quantity,
-            }))
-          );
-          if (itemsError) throw itemsError;
-
           const origin = new URL(request.url).origin;
           const siteUrl = (process.env.SITE_URL ?? origin).replace(/\/$/, "");
           const webhookToken = process.env.ORDER_WEBHOOK_TOKEN ?? "";
