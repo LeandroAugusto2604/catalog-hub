@@ -43,18 +43,6 @@ function Auth() {
         if (error) throw error;
         toast.success("Enviamos um link de redefinição para o seu e-mail.");
         setMode("login");
-      } else if (mode === "signup") {
-        const { error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            emailRedirectTo: `${window.location.origin}/admin`,
-            data: { full_name: name },
-          },
-        });
-        if (error) throw error;
-        toast.success("Conta criada! Você já pode entrar.");
-        setMode("login");
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
