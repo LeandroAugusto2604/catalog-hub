@@ -79,6 +79,19 @@ function OrdersAdmin() {
     setOrders((os) => os.map((o) => (o.id === id ? { ...o, shipping_status } : o)));
   };
 
+  const removeOrder = async (id: string, name: string) => {
+    if (!confirm(`Remover o pedido de ${name}? Essa ação não pode ser desfeita.`)) return;
+    const { error: itemsError } = await supabase
+      .from("order_items")
+      .delete()
+      .eq("order_id", id);
+    if (itemsError) return toast.error(itemsError.message);
+    const { error } = await supabase.from("orders").delete().eq("id", id);
+    if (error) return toast.error(error.message);
+    toast.success("Pedido removido");
+    setOrders((os) => os.filter((o) => o.id !== id));
+  };
+
   const statusColor = (s: string) =>
     ({
       pago: "bg-green-500/15 text-green-300 border-green-500/30",
