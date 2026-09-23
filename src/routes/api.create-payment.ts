@@ -115,6 +115,7 @@ export const Route = createFileRoute("/api/create-payment")({
           }
           const subtotal = lines.reduce((a, l) => a + l.unit_price * l.quantity, 0);
           const total = subtotal; // frete grátis para o cliente (custo pago pela loja)
+          const order_id = crypto.randomUUID();
           const origin = new URL(request.url).origin;
           const siteUrl = (process.env.SITE_URL ?? origin).replace(/\/$/, "");
           const webhookToken = process.env.ORDER_WEBHOOK_TOKEN ?? "";
