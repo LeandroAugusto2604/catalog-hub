@@ -136,7 +136,7 @@ export async function createSuperFreteOrder(order: any, items: any[]): Promise<s
     volumes: { height, width, length, weight },
     options: { insurance_value: 0, receipt: false, own_hand: false, non_commercial: true },
     platform: "TudoTop",
-    tag: orderId,
+    tag: String(order.id),
   };
   const res = await fetch("https://api.superfrete.com/api/v0/cart", {
     method: "POST",
