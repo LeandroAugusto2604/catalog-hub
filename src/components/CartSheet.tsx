@@ -25,7 +25,13 @@ const formSchema = z.object({
   whatsapp: z.string().trim().min(8, "WhatsApp inválido").max(40),
   email: z.string().trim().email("E-mail inválido").max(320),
   notes: z.string().max(1000).optional(),
+  cpf: z.string().optional(),
 });
+
+const cpfSchema = z
+  .string()
+  .transform((v) => v.replace(/\D/g, ""))
+  .refine((v) => v.length === 11, "Informe um CPF válido (11 dígitos)");
 
 const addressSchema = z.object({
   cep: z.string().trim().min(8, "CEP inválido").max(12),
