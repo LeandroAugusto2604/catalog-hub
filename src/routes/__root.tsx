@@ -29,18 +29,15 @@ export const Route = createRootRoute({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Catalog Hub is a digital catalog system for showcasing products and managing customer inquiries." },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Catalog Hub is a digital catalog system for showcasing products and managing customer inquiries." },
+      { title: "Tudo Top — Catálogo Digital" },
+      { name: "description", content: "Catálogo Tudo Top com carrinho, compra online e pedidos pelo WhatsApp." },
+      { name: "author", content: "Tudo Top" },
+      { property: "og:title", content: "Tudo Top — Catálogo Digital" },
+      { property: "og:description", content: "Catálogo Tudo Top com carrinho, compra online e pedidos pelo WhatsApp." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
-      { name: "twitter:site", content: "@Lovable" },
-      { name: "twitter:title", content: "Lovable App" },
-      { name: "twitter:description", content: "Catalog Hub is a digital catalog system for showcasing products and managing customer inquiries." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/d008c762-3d74-422a-90a5-1b2c4bf45a6d/id-preview-cbe0f232--ec8100ff-380a-4564-af72-7d8d0594ea90.lovable.app-1777345575494.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/d008c762-3d74-422a-90a5-1b2c4bf45a6d/id-preview-cbe0f232--ec8100ff-380a-4564-af72-7d8d0594ea90.lovable.app-1777345575494.png" },
+      { name: "twitter:title", content: "Tudo Top — Catálogo Digital" },
+      { name: "twitter:description", content: "Catálogo Tudo Top com carrinho, compra online e pedidos pelo WhatsApp." },
     ],
     links: [
       {
@@ -56,7 +53,7 @@ export const Route = createRootRoute({
 
 function RootShell({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="pt-BR">
       <head>
         <HeadContent />
       </head>

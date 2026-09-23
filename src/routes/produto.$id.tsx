@@ -16,12 +16,12 @@ export const Route = createFileRoute("/produto/$id")({
       {
         name: "description",
         content:
-          "Veja fotos e vídeo do produto em detalhes e adicione ao seu orçamento em poucos cliques.",
+          "Veja fotos e vídeo do produto em detalhes e adicione ao seu carrinho em poucos cliques.",
       },
       { property: "og:title", content: "Produto — Catálogo Digital" },
       {
         property: "og:description",
-        content: "Fotos, vídeo e detalhes do produto. Monte seu orçamento online.",
+        content: "Fotos, vídeo e detalhes do produto. Monte seu carrinho online.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -263,18 +263,18 @@ function ProductPage() {
                   price: Number(product.price),
                   image_url: cover,
                 });
-                toast.success("Adicionado ao orçamento");
+                toast.success("Adicionado ao carrinho");
               }}
             >
               <Plus className="h-4 w-4 mr-2" />
-              Adicionar ao orçamento
+              Adicionar ao carrinho
             </Button>
             <Button
               variant="outline"
               className="w-full mt-2 h-11"
               onClick={() => setCartOpen(true)}
             >
-              Ver meu orçamento
+              Ver meu carrinho
             </Button>
 
             {product.description && (

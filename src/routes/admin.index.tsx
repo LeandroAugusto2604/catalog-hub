@@ -20,11 +20,32 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { Pencil, Plus, Trash2, Loader2, ImageIcon, X, Video } from "lucide-react";
+import {
+  ArrowDown,
+  ArrowUp,
+  Pencil,
+  Plus,
+  Trash2,
+  Loader2,
+  ImageIcon,
+  X,
+  Video,
+} from "lucide-react";
 import { toast } from "sonner";
 import { formatBRL } from "@/lib/cart";
 
 export const Route = createFileRoute("/admin/")({
+  head: () => ({
+    meta: [
+      { title: "Produtos — Admin Tudo Top" },
+      { name: "description", content: "Organize e atualize os produtos do catálogo Tudo Top." },
+      { property: "og:title", content: "Produtos — Admin Tudo Top" },
+      { property: "og:description", content: "Organize e atualize os produtos do catálogo Tudo Top." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+      { name: "robots", content: "noindex" },
+    ],
+  }),
   component: ProductsAdmin,
 });
 
@@ -42,6 +63,7 @@ interface Product {
   video_url: string | null;
   category_id: string | null;
   active: boolean;
+  sort_order: number;
 }
 interface Category {
   id: string;
@@ -85,7 +107,11 @@ function ProductsAdmin() {
   const load = async () => {
     setLoading(true);
     const [p, c] = await Promise.all([
-      supabase.from("products").select("*").order("created_at", { ascending: false }),
+      supabase
+        .from("products")
+        .select("*")
+        .order("sort_order", { ascending: true })
+        .order("created_at", { ascending: false }),
       supabase.from("categories").select("id,name").order("name"),
     ]);
     setProducts((p.data as Product[]) ?? []);
@@ -205,7 +231,13 @@ function ProductsAdmin() {
         if (error) throw error;
         toast.success("Produto atualizado");
       } else {
-        const { error } = await supabase.from("products").insert(payload);
+        const nextSortOrder =
+          products.length > 0
+            ? Math.max(...products.map((p) => Number(p.sort_order) || 0)) + 1
+            : 1;
+        const { error } = await supabase
+          .from("products")
+          .insert({ ...payload, sort_order: nextSortOrder });
         if (error) throw error;
         toast.success("Produto criado");
       }
@@ -224,6 +256,41 @@ function ProductsAdmin() {
     if (error) return toast.error(error.message);
     toast.success("Excluído");
     load();
+  };
+
+  const moveProduct = async (index: number, direction: -1 | 1) => {
+    const target = index + direction;
+    if (target < 0 || target >= products.length) return;
+
+    const reordered = [...products];
+    const current = reordered[index];
+    const next = reordered[target];
+    if (!current || !next) return;
+
+    reordered[index] = next;
+    reordered[target] = current;
+
+    const withOrder = reordered.map((product, idx) => ({
+      ...product,
+      sort_order: idx + 1,
+    }));
+
+    setProducts(withOrder);
+    const results = await Promise.all(
+      withOrder.map((product) =>
+        supabase
+          .from("products")
+          .update({ sort_order: product.sort_order })
+          .eq("id", product.id)
+      )
+    );
+    const failed = results.find((result) => result.error);
+    if (failed?.error) {
+      toast.error(failed.error.message);
+      load();
+      return;
+    }
+    toast.success("Ordem atualizada");
   };
 
   const addCategory = async () => {
@@ -441,11 +508,36 @@ function ProductsAdmin() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-          {products.map((p) => {
+          {products.map((p, index) => {
             const cover = p.image_urls?.[0] ?? p.image_url;
             const count = p.image_urls?.length ?? (p.image_url ? 1 : 0);
             return (
               <div key={p.id} className="card-elevated rounded-xl p-3 flex gap-3">
+                <div className="flex flex-col items-center gap-1 shrink-0">
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    className="h-7 w-7"
+                    disabled={index === 0}
+                    onClick={() => moveProduct(index, -1)}
+                    aria-label="Subir produto"
+                  >
+                    <ArrowUp className="h-3.5 w-3.5" />
+                  </Button>
+                  <span className="text-[10px] text-muted-foreground tabular-nums">
+                    {index + 1}
+                  </span>
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    className="h-7 w-7"
+                    disabled={index === products.length - 1}
+                    onClick={() => moveProduct(index, 1)}
+                    aria-label="Descer produto"
+                  >
+                    <ArrowDown className="h-3.5 w-3.5" />
+                  </Button>
+                </div>
                 <div className="h-20 w-20 rounded-lg bg-muted overflow-hidden flex-shrink-0 relative">
                   {cover ? (
                     <img src={cover} className="w-full h-full object-cover" />

@@ -5,7 +5,6 @@
 //   ORDER_WEBHOOK_TOKEN    senha interna usada pelo webhook (já preenchida no .env)
 //   SITE_URL               ex: https://tudotop.dev-prod.cloud
 import { createFileRoute } from "@tanstack/react-router";
-import { createClient } from "@supabase/supabase-js";
 import nodemailer from "nodemailer";
 import { z } from "zod";
 
@@ -63,18 +62,14 @@ export const Route = createFileRoute("/api/create-payment")({
             );
           }
 
-          const SUPABASE_URL =
-            process.env.SUPABASE_URL ?? process.env.VITE_SUPABASE_URL;
-          const SUPABASE_KEY =
-            process.env.SUPABASE_SERVICE_ROLE_KEY ||
-            process.env.SUPABASE_PUBLISHABLE_KEY ||
-            process.env.VITE_SUPABASE_PUBLISHABLE_KEY;
-          if (!SUPABASE_URL || !SUPABASE_KEY) {
+          const SUPABASE_URL = process.env.SUPABASE_URL;
+          const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+          if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
             return Response.json({ error: "Banco não configurado" }, { status: 500 });
           }
-          const supabase = createClient(SUPABASE_URL, SUPABASE_KEY, {
-            auth: { persistSession: false, autoRefreshToken: false },
-          });
+          const { supabaseAdmin: supabase } = await import(
+            "@/integrations/supabase/client.server"
+          );
 
           // Preços vêm SEMPRE do banco, nunca do navegador.
           const ids = [...new Set(data.items.map((i) => i.product_id))];
@@ -209,7 +204,6 @@ export const Route = createFileRoute("/api/create-payment")({
             .update({ mp_preference_id: mpJson.id })
             .eq("id", order_id)
             .then(({ error }) => {
-              // Atualização só funciona com service role; ignoramos silenciosamente.
               if (error) console.warn("[create-payment] preference_id não salvo:", error.message);
             });
 

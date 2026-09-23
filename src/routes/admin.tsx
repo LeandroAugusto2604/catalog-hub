@@ -7,7 +7,17 @@ import { LogOut, Package, FileText, Home, Loader2, ShieldAlert, CreditCard } fro
 import { Toaster } from "sonner";
 
 export const Route = createFileRoute("/admin")({
-  head: () => ({ meta: [{ title: "Admin — Catálogo" }] }),
+  head: () => ({
+    meta: [
+      { title: "Admin — Tudo Top" },
+      { name: "description", content: "Painel privado para gerenciar produtos e pedidos do catálogo Tudo Top." },
+      { property: "og:title", content: "Admin — Tudo Top" },
+      { property: "og:description", content: "Painel privado para gerenciar produtos e pedidos do catálogo Tudo Top." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+      { name: "robots", content: "noindex" },
+    ],
+  }),
   component: AdminLayout,
 });
 

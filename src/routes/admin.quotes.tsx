@@ -14,6 +14,17 @@ import { toast } from "sonner";
 import { formatBRL } from "@/lib/cart";
 
 export const Route = createFileRoute("/admin/quotes")({
+  head: () => ({
+    meta: [
+      { title: "Pedidos do carrinho — Admin Tudo Top" },
+      { name: "description", content: "Veja e responda os carrinhos enviados pelos clientes da Tudo Top." },
+      { property: "og:title", content: "Pedidos do carrinho — Admin Tudo Top" },
+      { property: "og:description", content: "Veja e responda os carrinhos enviados pelos clientes da Tudo Top." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+      { name: "robots", content: "noindex" },
+    ],
+  }),
   component: QuotesAdmin,
 });
 
@@ -86,7 +97,7 @@ function QuotesAdmin() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">Pedidos de Orçamento</h1>
+        <h1 className="text-2xl font-bold">Pedidos do Carrinho</h1>
         <p className="text-sm text-muted-foreground">{quotes.length} no total</p>
       </div>
 

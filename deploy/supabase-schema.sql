@@ -39,11 +39,14 @@ GRANT ALL ON public.user_roles TO service_role;
 ALTER TABLE public.user_roles ENABLE ROW LEVEL SECURITY;
 
 CREATE OR REPLACE FUNCTION public.has_role(_user_id uuid, _role public.app_role)
-RETURNS boolean LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public AS $$
+RETURNS boolean LANGUAGE sql STABLE SECURITY INVOKER SET search_path = public AS $$
   SELECT EXISTS (
     SELECT 1 FROM public.user_roles WHERE user_id = _user_id AND role = _role
   )
 $$;
+REVOKE ALL ON FUNCTION public.has_role(uuid, public.app_role) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.has_role(uuid, public.app_role) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.has_role(uuid, public.app_role) TO service_role;
 
 -- ---------- categories ----------
 CREATE TABLE IF NOT EXISTS public.categories (
@@ -68,6 +71,7 @@ CREATE TABLE IF NOT EXISTS public.products (
   video_url text,
   category_id uuid REFERENCES public.categories(id) ON DELETE SET NULL,
   active boolean NOT NULL DEFAULT true,
+  sort_order integer NOT NULL DEFAULT 0,
   created_at timestamptz NOT NULL DEFAULT now(),
   updated_at timestamptz NOT NULL DEFAULT now()
 );
@@ -79,6 +83,9 @@ ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
 DROP TRIGGER IF EXISTS products_updated_at ON public.products;
 CREATE TRIGGER products_updated_at BEFORE UPDATE ON public.products
 FOR EACH ROW EXECUTE FUNCTION public.set_updated_at();
+
+CREATE INDEX IF NOT EXISTS products_sort_order_idx
+ON public.products (sort_order, created_at DESC);
 
 -- ---------- quotes ----------
 CREATE TABLE IF NOT EXISTS public.quotes (
@@ -267,6 +274,12 @@ ALTER TABLE public.orders ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.order_items ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.app_secrets ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "service role manages app secrets" ON public.app_secrets;
+CREATE POLICY "service role manages app secrets" ON public.app_secrets
+FOR ALL TO service_role
+USING (true)
+WITH CHECK (true);
+
 DROP POLICY IF EXISTS "anyone creates order" ON public.orders;
 CREATE POLICY "anyone creates order" ON public.orders FOR INSERT TO anon, authenticated
 WITH CHECK (
@@ -328,7 +341,9 @@ BEGIN
   RETURN true;
 END; $$;
 REVOKE ALL ON FUNCTION public.confirm_order_payment(uuid, text, text, text, text) FROM PUBLIC;
-GRANT EXECUTE ON FUNCTION public.confirm_order_payment(uuid, text, text, text, text) TO anon, authenticated, service_role;
+REVOKE ALL ON FUNCTION public.confirm_order_payment(uuid, text, text, text, text) FROM anon;
+REVOKE ALL ON FUNCTION public.confirm_order_payment(uuid, text, text, text, text) FROM authenticated;
+GRANT EXECUTE ON FUNCTION public.confirm_order_payment(uuid, text, text, text, text) TO service_role;
 
 CREATE OR REPLACE FUNCTION public.get_order_status(_order_id uuid)
 RETURNS TABLE (id uuid, status text, total numeric, customer_name text, created_at timestamptz)
@@ -336,4 +351,7 @@ LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public AS $$
   SELECT o.id, o.status, o.total, o.customer_name, o.created_at
   FROM public.orders o WHERE o.id = _order_id
 $$;
-GRANT EXECUTE ON FUNCTION public.get_order_status(uuid) TO anon, authenticated, service_role;
+REVOKE ALL ON FUNCTION public.get_order_status(uuid) FROM PUBLIC;
+REVOKE ALL ON FUNCTION public.get_order_status(uuid) FROM anon;
+REVOKE ALL ON FUNCTION public.get_order_status(uuid) FROM authenticated;
+GRANT EXECUTE ON FUNCTION public.get_order_status(uuid) TO service_role;
