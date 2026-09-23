@@ -323,6 +323,23 @@ export function CartSheet({ open, onOpenChange }: Props) {
             </div>
 
             {mode === "buy" && (
+              <div className="space-y-2">
+                <Label htmlFor="cpf">CPF *</Label>
+                <Input
+                  id="cpf"
+                  inputMode="numeric"
+                  placeholder="000.000.000-00"
+                  value={form.cpf}
+                  onChange={(e) => setForm({ ...form, cpf: e.target.value })}
+                  required
+                />
+                <p className="text-xs text-muted-foreground">
+                  Obrigatório pelo Pix. Use um e-mail diferente do da sua conta Mercado Pago.
+                </p>
+              </div>
+            )}
+
+            {mode === "buy" && (
               <div className="space-y-3 pt-1">
                 <p className="text-xs font-medium text-muted-foreground">
                   Endereço de entrega
