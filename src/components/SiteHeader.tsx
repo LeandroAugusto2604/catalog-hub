@@ -24,12 +24,6 @@ export function SiteHeader({ onOpenCart }: Props) {
         </Link>
 
         <div className="flex items-center gap-2">
-          <Link to="/admin">
-            <Button variant="ghost" size="sm" className="hidden sm:inline-flex">
-              <ShieldCheck className="h-4 w-4 mr-2" />
-              Admin
-            </Button>
-          </Link>
           <Button
             onClick={onOpenCart}
             variant="outline"
