@@ -102,6 +102,7 @@ export type Database = {
           cidade: string
           complemento: string | null
           created_at: string
+          customer_document: string | null
           customer_name: string
           email: string
           id: string
@@ -130,6 +131,7 @@ export type Database = {
           cidade: string
           complemento?: string | null
           created_at?: string
+          customer_document?: string | null
           customer_name: string
           email: string
           id?: string
@@ -158,6 +160,7 @@ export type Database = {
           cidade?: string
           complemento?: string | null
           created_at?: string
+          customer_document?: string | null
           customer_name?: string
           email?: string
           id?: string
