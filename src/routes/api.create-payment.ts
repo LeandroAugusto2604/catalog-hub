@@ -167,7 +167,6 @@ export const Route = createFileRoute("/api/create-payment")({
               unit_price: Number(l.unit_price.toFixed(2)),
               currency_id: "BRL",
             })),
-            shipments: { cost: 0, free_shipping: true, mode: "not_specified" },
             payer: {
               name: data.customer_name.split(" ")[0],
               surname: data.customer_name.split(" ").slice(1).join(" ") || data.customer_name,
