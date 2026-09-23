@@ -229,6 +229,7 @@ export const Route = createFileRoute("/api/create-payment")({
               const table = `<table style="width:100%;border-collapse:collapse;margin:16px 0">${itemsHtml}<tr><td style="padding:12px 8px;font-weight:bold">Total</td><td style="padding:12px 8px;text-align:right;font-weight:bold;color:#ea580c">${fmt(total)}</td></tr></table>`;
               const wrap = (inner: string) =>
                 `<div style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto;padding:24px;background:#fff;color:#111">${inner}</div>`;
+              const contactBlock = `<p style="margin:16px 0;padding:12px;background:#fff7ed;border-radius:8px;font-size:14px">Dúvidas? WhatsApp <strong>(11) 93746-0073</strong> — <a href="https://wa.me/5511937460073" style="color:#ea580c">abrir conversa</a></p>`;
 
               await Promise.allSettled([
                 transporter.sendMail({
@@ -242,6 +243,7 @@ export const Route = createFileRoute("/api/create-payment")({
                     ${table}
                     <h3 style="font-size:15px;margin:24px 0 8px">Entrega</h3>
                     <p style="font-size:14px;color:#444">${address}</p>
+                    ${contactBlock}
                     <p style="font-size:12px;color:#666;margin-top:24px">Pedido nº ${order_id}</p>
                   `),
                 }),
