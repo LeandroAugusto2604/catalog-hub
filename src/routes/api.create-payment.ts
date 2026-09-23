@@ -14,6 +14,12 @@ const bodySchema = z.object({
   whatsapp: z.string().trim().min(5).max(40),
   email: z.string().trim().email().max(320),
   notes: z.string().max(1000).nullable().optional(),
+  cpf: z
+    .string()
+    .trim()
+    .transform((v) => v.replace(/\D/g, ""))
+    .refine((v) => v.length === 11, "CPF inválido")
+    .optional(),
   cep: z.string().trim().min(8).max(12),
   rua: z.string().trim().min(1).max(200),
   numero: z.string().trim().min(1).max(20),
@@ -155,8 +161,12 @@ export const Route = createFileRoute("/api/create-payment")({
               currency_id: "BRL",
             })),
             payer: {
-              name: data.customer_name,
+              name: data.customer_name.split(" ")[0],
+              surname: data.customer_name.split(" ").slice(1).join(" ") || data.customer_name,
               email: data.email,
+              ...(data.cpf
+                ? { identification: { type: "CPF", number: data.cpf } }
+                : {}),
               address: {
                 zip_code: data.cep.replace(/\D/g, ""),
                 street_name: data.rua,

@@ -25,7 +25,13 @@ const formSchema = z.object({
   whatsapp: z.string().trim().min(8, "WhatsApp inválido").max(40),
   email: z.string().trim().email("E-mail inválido").max(320),
   notes: z.string().max(1000).optional(),
+  cpf: z.string().optional(),
 });
+
+const cpfSchema = z
+  .string()
+  .transform((v) => v.replace(/\D/g, ""))
+  .refine((v) => v.length === 11, "Informe um CPF válido (11 dígitos)");
 
 const addressSchema = z.object({
   cep: z.string().trim().min(8, "CEP inválido").max(12),
@@ -50,7 +56,7 @@ export function CartSheet({ open, onOpenChange }: Props) {
   const total = useCart((s) => s.items.reduce((a, i) => a + i.price * i.quantity, 0));
 
   const [mode, setMode] = useState<"buy" | "quote">("buy");
-  const [form, setForm] = useState({ customer_name: "", whatsapp: "", email: "", notes: "" });
+  const [form, setForm] = useState({ customer_name: "", whatsapp: "", email: "", notes: "", cpf: "" });
   const [address, setAddress] = useState({
     cep: "",
     rua: "",
@@ -120,7 +126,7 @@ export function CartSheet({ open, onOpenChange }: Props) {
 
       toast.success("Orçamento enviado! Entraremos em contato em breve.");
       clear();
-      setForm({ customer_name: "", whatsapp: "", email: "", notes: "" });
+      setForm({ customer_name: "", whatsapp: "", email: "", notes: "", cpf: "" });
       onOpenChange(false);
     } catch (err: any) {
       console.error(err);
@@ -146,6 +152,11 @@ export function CartSheet({ open, onOpenChange }: Props) {
       toast.error(addr.error.issues[0].message);
       return;
     }
+    const cpf = cpfSchema.safeParse(form.cpf ?? "");
+    if (!cpf.success) {
+      toast.error(cpf.error.issues[0].message);
+      return;
+    }
 
     setPayingNow(true);
     try {
@@ -157,6 +168,7 @@ export function CartSheet({ open, onOpenChange }: Props) {
           whatsapp: parsed.data.whatsapp,
           email: parsed.data.email,
           notes: parsed.data.notes ?? null,
+          cpf: cpf.data,
           ...addr.data,
           complemento: addr.data.complemento ?? null,
           items: items.map((i) => ({ product_id: i.id, quantity: i.quantity })),
@@ -309,6 +321,23 @@ export function CartSheet({ open, onOpenChange }: Props) {
                 />
               </div>
             </div>
+
+            {mode === "buy" && (
+              <div className="space-y-2">
+                <Label htmlFor="cpf">CPF *</Label>
+                <Input
+                  id="cpf"
+                  inputMode="numeric"
+                  placeholder="000.000.000-00"
+                  value={form.cpf}
+                  onChange={(e) => setForm({ ...form, cpf: e.target.value })}
+                  required
+                />
+                <p className="text-xs text-muted-foreground">
+                  Obrigatório pelo Pix. Use um e-mail diferente do da sua conta Mercado Pago.
+                </p>
+              </div>
+            )}
 
             {mode === "buy" && (
               <div className="space-y-3 pt-1">
