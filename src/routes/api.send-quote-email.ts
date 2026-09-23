@@ -144,6 +144,7 @@ export const Route = createFileRoute("/api/send-quote-email")({
             <h3 style="margin:24px 0 0;font-size:15px">Itens solicitados</h3>
             ${itemsTable}
             ${notesBlock}
+            ${contactBlock}
             <p style="font-size:12px;color:#666;margin-top:24px">Este é um resumo do seu pedido de orçamento. Se algum dado estiver errado, responda a este e-mail.</p>
           `);
 
