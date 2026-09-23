@@ -120,7 +120,7 @@ export const Route = createFileRoute("/api/create-payment")({
             return Response.json({ error: "Frete indisponível. Calcule novamente." }, { status: 400 });
           }
           const subtotal = lines.reduce((a, l) => a + l.unit_price * l.quantity, 0);
-          const total = subtotal + ship.price;
+          const total = subtotal; // frete grátis para o cliente (custo pago pela loja)
           const order_id = crypto.randomUUID();
 
           const { error: orderError } = await supabase.from("orders").insert({
@@ -167,7 +167,6 @@ export const Route = createFileRoute("/api/create-payment")({
               unit_price: Number(l.unit_price.toFixed(2)),
               currency_id: "BRL",
             })),
-            shipments: { cost: Number(ship.price.toFixed(2)), mode: "not_specified" },
             payer: {
               name: data.customer_name.split(" ")[0],
               surname: data.customer_name.split(" ").slice(1).join(" ") || data.customer_name,
@@ -241,7 +240,7 @@ export const Route = createFileRoute("/api/create-payment")({
                   (l) =>
                     `<tr><td style="padding:8px;border-bottom:1px solid #eee">${l.quantity}× ${l.product_name}</td><td style="padding:8px;border-bottom:1px solid #eee;text-align:right">${fmt(l.unit_price * l.quantity)}</td></tr>`
                 )
-                .join("") + `<tr><td style="padding:8px;border-bottom:1px solid #eee">Frete ${ship.name} (até ${ship.days} dias úteis)</td><td style="padding:8px;border-bottom:1px solid #eee;text-align:right">${fmt(ship.price)}</td></tr>`;
+                .join("") + `<tr><td style="padding:8px;border-bottom:1px solid #eee">Frete ${ship.name} (até ${ship.days} dias úteis)</td><td style="padding:8px;border-bottom:1px solid #eee;text-align:right;color:#16a34a;font-weight:bold">Grátis</td></tr>`;
               const address = `${data.rua}, ${data.numero}${data.complemento ? ` - ${data.complemento}` : ""}<br>${data.bairro} — ${data.cidade}/${data.uf.toUpperCase()}<br>CEP ${data.cep}`;
               const table = `<table style="width:100%;border-collapse:collapse;margin:16px 0">${itemsHtml}<tr><td style="padding:12px 8px;font-weight:bold">Total</td><td style="padding:12px 8px;text-align:right;font-weight:bold;color:#ea580c">${fmt(total)}</td></tr></table>`;
               const wrap = (inner: string) =>

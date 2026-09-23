@@ -45,6 +45,9 @@ interface Order {
   status: string;
   payment_method: string | null;
   shipping_status: string;
+  shipping_price: number | null;
+  shipping_service: string | null;
+  shipping_days: number | null;
   created_at: string;
 }
 interface Item {
@@ -218,8 +221,17 @@ function OrdersAdmin() {
                         </div>
                       ))}
                     </div>
+                    {o.shipping_service && (
+                      <div className="flex justify-between text-sm py-1 text-muted-foreground">
+                        <span>
+                          Frete pago pela loja: {o.shipping_service}
+                          {o.shipping_days ? ` (até ${o.shipping_days} dias úteis)` : ""}
+                        </span>
+                        <span>{formatBRL(Number(o.shipping_price ?? 0))}</span>
+                      </div>
+                    )}
                     <div className="flex justify-between font-semibold pt-2 mt-2 border-t border-border">
-                      <span>Total</span>
+                      <span>Total pago pelo cliente</span>
                       <span className="text-primary">{formatBRL(Number(o.total))}</span>
                     </div>
                   </div>
