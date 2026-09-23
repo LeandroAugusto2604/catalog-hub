@@ -18,7 +18,7 @@ import { useCart, formatBRL } from "@/lib/cart";
 import { toast } from "sonner";
 import { z } from "zod";
 
-const STORE_WHATSAPP = "5511973460073";
+const STORE_WHATSAPP = "5511937460073";
 
 const formSchema = z.object({
   customer_name: z.string().trim().min(2, "Nome muito curto").max(200),
