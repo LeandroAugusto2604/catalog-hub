@@ -8,6 +8,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import nodemailer from "nodemailer";
 import { z } from "zod";
 import { quoteShipping } from "@/lib/shipping.server";
+import { getPublicSupabase } from "@/lib/supabase-public.server";
 
 const bodySchema = z.object({
   customer_name: z.string().trim().min(2).max(200),
@@ -64,14 +65,7 @@ export const Route = createFileRoute("/api/create-payment")({
             );
           }
 
-          const SUPABASE_URL = process.env.SUPABASE_URL;
-          const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
-          if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
-            return Response.json({ error: "Banco não configurado" }, { status: 500 });
-          }
-          const { supabaseAdmin: supabase } = await import(
-            "@/integrations/supabase/client.server"
-          );
+          const supabase = getPublicSupabase();
 
           // Preços vêm SEMPRE do banco, nunca do navegador.
           const ids = [...new Set(data.items.map((i) => i.product_id))];
