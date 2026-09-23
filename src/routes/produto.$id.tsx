@@ -7,6 +7,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { SiteHeader } from "@/components/SiteHeader";
 import { CartSheet } from "@/components/CartSheet";
 import { useCart, formatBRL } from "@/lib/cart";
+import { ShippingCalculator } from "@/components/ShippingCalculator";
 import { Toaster, toast } from "sonner";
 
 export const Route = createFileRoute("/produto/$id")({
@@ -276,6 +277,10 @@ function ProductPage() {
             >
               Ver meu carrinho
             </Button>
+
+            <div className="mt-5 pt-5 border-t border-border">
+              <ShippingCalculator items={[{ product_id: product.id, quantity: 1 }]} />
+            </div>
 
             {product.description && (
               <div className="mt-6 pt-6 border-t border-border">

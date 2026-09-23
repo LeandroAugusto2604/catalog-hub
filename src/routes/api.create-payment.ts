@@ -7,6 +7,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import nodemailer from "nodemailer";
 import { z } from "zod";
+import { quoteShipping } from "@/lib/shipping.server";
 
 const bodySchema = z.object({
   customer_name: z.string().trim().min(2).max(200),
@@ -26,6 +27,7 @@ const bodySchema = z.object({
   bairro: z.string().trim().min(1).max(120),
   cidade: z.string().trim().min(1).max(120),
   uf: z.string().trim().length(2),
+  shipping_service_id: z.string().min(1).max(10),
   items: z
     .array(
       z.object({
@@ -111,7 +113,14 @@ export const Route = createFileRoute("/api/create-payment")({
             );
           }
 
-          const total = lines.reduce((a, l) => a + l.unit_price * l.quantity, 0);
+          // Frete recalculado no servidor
+          const shipOpts = await quoteShipping(data.cep, data.items);
+          const ship = shipOpts.find((o) => o.id === data.shipping_service_id);
+          if (!ship) {
+            return Response.json({ error: "Frete indisponível. Calcule novamente." }, { status: 400 });
+          }
+          const subtotal = lines.reduce((a, l) => a + l.unit_price * l.quantity, 0);
+          const total = subtotal + ship.price;
           const order_id = crypto.randomUUID();
 
           const { error: orderError } = await supabase.from("orders").insert({
@@ -128,6 +137,9 @@ export const Route = createFileRoute("/api/create-payment")({
             cidade: data.cidade,
             uf: data.uf.toUpperCase(),
             total,
+            shipping_price: ship.price,
+            shipping_service: ship.name,
+            shipping_days: ship.days,
             status: "pendente",
           });
           if (orderError) throw orderError;
@@ -155,6 +167,7 @@ export const Route = createFileRoute("/api/create-payment")({
               unit_price: Number(l.unit_price.toFixed(2)),
               currency_id: "BRL",
             })),
+            shipments: { cost: Number(ship.price.toFixed(2)), mode: "not_specified" },
             payer: {
               name: data.customer_name.split(" ")[0],
               surname: data.customer_name.split(" ").slice(1).join(" ") || data.customer_name,
@@ -228,7 +241,7 @@ export const Route = createFileRoute("/api/create-payment")({
                   (l) =>
                     `<tr><td style="padding:8px;border-bottom:1px solid #eee">${l.quantity}× ${l.product_name}</td><td style="padding:8px;border-bottom:1px solid #eee;text-align:right">${fmt(l.unit_price * l.quantity)}</td></tr>`
                 )
-                .join("");
+                .join("") + `<tr><td style="padding:8px;border-bottom:1px solid #eee">Frete ${ship.name} (até ${ship.days} dias úteis)</td><td style="padding:8px;border-bottom:1px solid #eee;text-align:right">${fmt(ship.price)}</td></tr>`;
               const address = `${data.rua}, ${data.numero}${data.complemento ? ` - ${data.complemento}` : ""}<br>${data.bairro} — ${data.cidade}/${data.uf.toUpperCase()}<br>CEP ${data.cep}`;
               const table = `<table style="width:100%;border-collapse:collapse;margin:16px 0">${itemsHtml}<tr><td style="padding:12px 8px;font-weight:bold">Total</td><td style="padding:12px 8px;text-align:right;font-weight:bold;color:#ea580c">${fmt(total)}</td></tr></table>`;
               const wrap = (inner: string) =>

@@ -64,6 +64,10 @@ interface Product {
   category_id: string | null;
   active: boolean;
   sort_order: number;
+  weight_kg: number;
+  height_cm: number;
+  width_cm: number;
+  length_cm: number;
 }
 interface Category {
   id: string;
@@ -79,6 +83,10 @@ interface EditingState {
   video_url: string;
   category_id: string;
   active: boolean;
+  weight_kg: string;
+  height_cm: string;
+  width_cm: string;
+  length_cm: string;
 }
 
 const empty: EditingState = {
@@ -90,6 +98,10 @@ const empty: EditingState = {
   video_url: "",
   category_id: "",
   active: true,
+  weight_kg: "0.3",
+  height_cm: "17",
+  width_cm: "9",
+  length_cm: "7",
 };
 
 function ProductsAdmin() {
@@ -140,6 +152,10 @@ function ProductsAdmin() {
       video_url: p.video_url ?? "",
       category_id: p.category_id ?? "",
       active: p.active,
+      weight_kg: String(p.weight_kg ?? 0.3),
+      height_cm: String(p.height_cm ?? 17),
+      width_cm: String(p.width_cm ?? 9),
+      length_cm: String(p.length_cm ?? 7),
     });
     setOpen(true);
   };
@@ -225,6 +241,10 @@ function ProductsAdmin() {
         video_url: editing.video_url || null,
         category_id: editing.category_id || null,
         active: editing.active,
+        weight_kg: Number(editing.weight_kg) || 0.3,
+        height_cm: Number(editing.height_cm) || 17,
+        width_cm: Number(editing.width_cm) || 9,
+        length_cm: Number(editing.length_cm) || 7,
       };
       if (editing.id) {
         const { error } = await supabase.from("products").update(payload).eq("id", editing.id);
@@ -334,6 +354,24 @@ function ProductsAdmin() {
                   value={editing.description}
                   onChange={(e) => setEditing({ ...editing, description: e.target.value })}
                 />
+              </div>
+              <div className="grid grid-cols-4 gap-2">
+                {([
+                  ["weight_kg", "Peso (kg)"],
+                  ["height_cm", "Altura (cm)"],
+                  ["width_cm", "Largura (cm)"],
+                  ["length_cm", "Compr. (cm)"],
+                ] as const).map(([k, label]) => (
+                  <div key={k} className="space-y-1.5">
+                    <Label className="text-xs">{label}</Label>
+                    <Input
+                      type="number"
+                      step="0.01"
+                      value={editing[k]}
+                      onChange={(e) => setEditing({ ...editing, [k]: e.target.value })}
+                    />
+                  </div>
+                ))}
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1.5">
