@@ -116,6 +116,7 @@ export const Route = createFileRoute("/api/public/mercadopago-webhook")({
               process.env.ADMIN_EMAIL ?? "leandro_cjc@hotmail.com";
             const customerEmail = shipData?.order?.email || payment?.payer?.email;
             const days = Number(shipData?.order?.shipping_days ?? 0);
+            const amount = Number(payment?.transaction_amount ?? 0);
             const deliveryText = days > 0 ? businessDaysDate(days) : "";
             const o: any = shipData?.order ?? {};
             const its: any[] = shipData?.items ?? [];
@@ -127,7 +128,6 @@ export const Route = createFileRoute("/api/public/mercadopago-webhook")({
               ? `<h3 style="font-size:15px;margin:24px 0 8px">Endereço de entrega</h3><p style="font-size:14px;color:#444">${esc(o.rua)}, ${esc(o.numero)}${o.complemento ? ` - ${esc(o.complemento)}` : ""}<br>${esc(o.bairro)} — ${esc(o.cidade)}/${esc(String(o.uf ?? "").toUpperCase())}<br>CEP ${esc(o.cep)}</p>`
               : "";
             const firstName = String(shipData?.order?.customer_name ?? "").split(" ")[0];
-            const amount = Number(payment?.transaction_amount ?? 0);
 
             if (SMTP_HOST && SMTP_USER && SMTP_PASS) {
               const transporter = nodemailer.createTransport({
