@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { ShoppingCart } from "lucide-react";
+import { ShoppingCart, PackageSearch } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/lib/cart";
 import { Badge } from "@/components/ui/badge";
@@ -24,6 +24,12 @@ export function SiteHeader({ onOpenCart }: Props) {
         </Link>
 
         <div className="flex items-center gap-2">
+          <Link to="/meu-pedido">
+            <Button variant="ghost" size="sm">
+              <PackageSearch className="h-4 w-4 sm:mr-2" />
+              <span className="hidden sm:inline">Meu pedido</span>
+            </Button>
+          </Link>
           <Button
             onClick={onOpenCart}
             variant="outline"

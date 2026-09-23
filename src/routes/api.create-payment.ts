@@ -210,6 +210,9 @@ export const Route = createFileRoute("/api/create-payment")({
           );
           if (itemsError) throw itemsError;
 
+          const { data: st } = await supabase.rpc("get_order_status" as any, { _order_id: order_id });
+          const orderNumber: string = String((Array.isArray(st) ? st[0] : st)?.order_number ?? order_id.slice(0, 8));
+
           // E-mails informando o pedido criado (aguardando pagamento)
           try {
             const SMTP_HOST = process.env.SMTP_HOST;
@@ -252,7 +255,7 @@ export const Route = createFileRoute("/api/create-payment")({
                     <p style="font-size:14px;color:#444">${address}</p>
                     <p style="font-size:14px">Frete: <strong style="color:#16a34a">grátis</strong> (${ship.name})<br>Previsão de entrega: <strong>${businessDaysDate(ship.days)}</strong> <span style="color:#666;font-size:12px">(após a confirmação do pagamento)</span></p>
                     ${contactBlock}
-                    <p style="font-size:12px;color:#666;margin-top:24px">Pedido nº ${order_id}</p>
+                    <p style="font-size:12px;color:#666;margin-top:24px">Pedido nº <strong>${orderNumber}</strong> — consulte o status em ${process.env.SITE_URL ?? "https://tudotop.dev-prod.cloud"}/meu-pedido</p>
                   `),
                 }),
                 transporter.sendMail({
@@ -272,7 +275,7 @@ export const Route = createFileRoute("/api/create-payment")({
                     <p style="font-size:14px;color:#444">${address}</p>
                     <p style="font-size:14px">Frete ${ship.name} — previsão: <strong>${businessDaysDate(ship.days)}</strong></p>
                     ${data.notes ? `<p style="background:#f5f5f5;padding:12px;border-radius:8px"><strong>Observações:</strong><br>${data.notes}</p>` : ""}
-                    <p style="font-size:12px;color:#666;margin-top:24px">Pedido nº ${order_id}</p>
+                    <p style="font-size:12px;color:#666;margin-top:24px">Pedido nº <strong>${orderNumber}</strong> — consulte o status em ${process.env.SITE_URL ?? "https://tudotop.dev-prod.cloud"}/meu-pedido</p>
                   `),
                 }),
               ]);

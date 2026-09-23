@@ -33,6 +33,7 @@ interface OrderStatus {
   total: number;
   customer_name: string;
   created_at: string;
+  order_number?: number;
 }
 
 const LABELS: Record<string, { title: string; text: string; tone: string }> = {
@@ -129,9 +130,12 @@ function OrderStatusPage() {
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Pedido</span>
-                <span className="font-mono text-[11px]">{order.id.slice(0, 8)}</span>
+                <span className="font-bold text-lg text-primary">nº {order.order_number ?? order.id.slice(0, 8)}</span>
               </div>
             </div>
+            <p className="text-xs text-muted-foreground mt-3">
+              Guarde este número. Você pode consultar o pedido depois em "Meu pedido", com seu nome completo e o número.
+            </p>
           </>
         )}
 

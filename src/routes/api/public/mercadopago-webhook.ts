@@ -162,7 +162,7 @@ export const Route = createFileRoute("/api/public/mercadopago-webhook")({
                         ${itemsTable}
                         ${addressHtml}
                         <p>Dúvidas? Fale com a gente no WhatsApp (11) 93746-0073.</p>
-                        <p style="font-size:12px;color:#666;margin-top:24px">Pedido nº ${orderId}</p>
+                        <p style="font-size:12px;color:#666;margin-top:24px">Pedido nº <strong>${shipData?.order?.order_number ?? orderId}</strong> — consulte o status em ${process.env.SITE_URL ?? "https://tudotop.dev-prod.cloud"}/meu-pedido</p>
                       `),
                     })
                   : Promise.resolve(),
@@ -177,7 +177,7 @@ export const Route = createFileRoute("/api/public/mercadopago-webhook")({
                     ${itemsTable}
                     ${addressHtml}
                     ${deliveryText ? `<p>Previsão de entrega: <strong>${deliveryText}</strong></p>` : ""}
-                    <p style="font-size:12px;color:#666;margin-top:24px">Pedido nº ${orderId}</p>
+                    <p style="font-size:12px;color:#666;margin-top:24px">Pedido nº <strong>${shipData?.order?.order_number ?? orderId}</strong> — consulte o status em ${process.env.SITE_URL ?? "https://tudotop.dev-prod.cloud"}/meu-pedido</p>
                   `),
                 }),
               ]);
