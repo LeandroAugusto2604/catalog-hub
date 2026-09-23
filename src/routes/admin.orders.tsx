@@ -213,7 +213,7 @@ function OrdersAdmin() {
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-wrap">
                     <span className="text-xs text-muted-foreground">Entrega:</span>
                     <Select
                       value={o.shipping_status}
