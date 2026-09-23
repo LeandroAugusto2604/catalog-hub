@@ -373,6 +373,10 @@ export type Database = {
         }
         Returns: boolean
       }
+      get_order_for_shipping: {
+        Args: { _order_id: string; _token: string }
+        Returns: Json
+      }
       get_order_status: {
         Args: { _order_id: string }
         Returns: {
@@ -388,6 +392,10 @@ export type Database = {
           _role: Database["public"]["Enums"]["app_role"]
           _user_id: string
         }
+        Returns: boolean
+      }
+      set_superfrete_id: {
+        Args: { _order_id: string; _sf_id: string; _token: string }
         Returns: boolean
       }
     }
