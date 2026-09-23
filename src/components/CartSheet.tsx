@@ -168,6 +168,7 @@ export function CartSheet({ open, onOpenChange }: Props) {
           whatsapp: parsed.data.whatsapp,
           email: parsed.data.email,
           notes: parsed.data.notes ?? null,
+          cpf: cpf.data,
           ...addr.data,
           complemento: addr.data.complemento ?? null,
           items: items.map((i) => ({ product_id: i.id, quantity: i.quantity })),
