@@ -269,13 +269,13 @@ export function CartSheet({ open, onOpenChange }: Props) {
             {mode === "buy" && shipping && (
               <div className="flex items-center justify-between text-sm">
                 <span className="text-muted-foreground">Frete ({shipping.name})</span>
-                <span className="font-semibold">{formatBRL(shipping.price)}</span>
+                <span className="font-semibold text-primary">Grátis</span>
               </div>
             )}
             <div className="flex items-center justify-between text-sm">
               <span className="text-muted-foreground">Total</span>
               <span className="text-xl font-bold text-primary">
-                {formatBRL(total + (mode === "buy" && shipping ? shipping.price : 0))}
+                {formatBRL(total)}
               </span>
             </div>
             {mode === "buy" && (

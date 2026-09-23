@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Truck, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { formatBRL } from "@/lib/cart";
 
 export interface ShippingOption {
   id: string;
@@ -99,7 +98,7 @@ export function ShippingCalculator({ items, cep: extCep, onCepChange, selectedId
                     Chega em até {o.days} {o.days === 1 ? "dia útil" : "dias úteis"}
                   </span>
                 </span>
-                <span className="font-semibold text-primary">{formatBRL(o.price)}</span>
+                <span className="font-semibold text-primary">Frete grátis</span>
               </Tag>
             );
           })}
