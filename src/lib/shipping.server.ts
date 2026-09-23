@@ -93,7 +93,11 @@ export const SENDER = {
 
 // Cria o envio no carrinho do SuperFrete (aparece no painel para pagar/gerar etiqueta).
 // Recebe o pedido e os itens já lidos do banco (função protegida por token).
-export async function createSuperFreteOrder(order: any, items: any[]): Promise<string | null> {
+export async function createSuperFreteOrder(
+  order: any,
+  items: any[],
+  recipientDocument: string
+): Promise<string | null> {
   const token = process.env.SUPERFRETE_TOKEN;
   if (!token) return null;
   if (!order || order.superfrete_id || !order.shipping_service_id) return order?.superfrete_id ?? null;
@@ -117,15 +121,17 @@ export async function createSuperFreteOrder(order: any, items: any[]): Promise<s
   const body = {
     from: SENDER,
     to: {
-      name: order.customer_name,
-      address: order.rua,
-      number: order.numero,
-      complement: order.complemento ?? "",
-      district: order.bairro,
-      city: order.cidade,
-      state_abbr: order.uf,
+      name: String(order.customer_name).slice(0, 50),
+      address: String(order.rua).slice(0, 50),
+      number: String(order.numero ?? "").slice(0, 10),
+      complement: String(order.complemento ?? "").slice(0, 20),
+      district: String(order.bairro || "NA").slice(0, 50),
+      city: String(order.cidade).slice(0, 50),
+      state_abbr: String(order.uf).toUpperCase(),
       postal_code: String(order.cep).replace(/\D/g, ""),
       email: order.email,
+      phone: String(order.whatsapp ?? "").replace(/\D/g, "").slice(-11),
+      document: recipientDocument.replace(/\D/g, ""),
     },
     service: Number(order.shipping_service_id),
     products: (items ?? []).map((i: any) => ({
@@ -151,7 +157,7 @@ export async function createSuperFreteOrder(order: any, items: any[]): Promise<s
   const json: any = await res.json().catch(() => null);
   if (!res.ok || !json?.id) {
     console.error("[superfrete] criar envio falhou:", res.status, json);
-    return null;
+    throw new Error(`SuperFrete recusou o envio (${res.status})`);
   }
   return String(json.id) || null;
 }
