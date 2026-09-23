@@ -67,8 +67,7 @@ export const Route = createFileRoute("/api/public/mercadopago-webhook")({
                 : (payment?.payment_type_id ?? null);
           if (!orderId) return new Response("ok");
 
-          const SUPABASE_URL =
-            process.env.SUPABASE_URL ?? process.env.VITE_SUPABASE_URL;
+          const SUPABASE_URL = process.env.SUPABASE_URL;
           const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
           if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) return new Response("ok");
 
