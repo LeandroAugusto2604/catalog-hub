@@ -140,6 +140,7 @@ export const Route = createFileRoute("/api/create-payment")({
             shipping_price: ship.price,
             shipping_service: ship.name,
             shipping_days: ship.days,
+            shipping_service_id: ship.id,
             status: "pendente",
           });
           if (orderError) throw orderError;

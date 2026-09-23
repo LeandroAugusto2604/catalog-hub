@@ -85,6 +85,12 @@ export const Route = createFileRoute("/api/public/mercadopago-webhook")({
           if (error) console.error("[mp-webhook] update falhou:", error.message);
 
           if (status === "pago") {
+            try {
+              const { createSuperFreteOrder } = await import("@/lib/shipping.server");
+              await createSuperFreteOrder(supabase, orderId);
+            } catch (e) {
+              console.error("[mp-webhook] superfrete:", e);
+            }
             const SMTP_HOST = process.env.SMTP_HOST;
             const SMTP_USER = process.env.SMTP_USER;
             const SMTP_PASS = process.env.SMTP_PASS;

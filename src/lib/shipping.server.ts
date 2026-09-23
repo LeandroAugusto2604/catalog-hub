@@ -83,3 +83,87 @@ export async function quoteShipping(
     }))
     .sort((a: ShippingOption, b: ShippingOption) => a.price - b.price);
 }
+
+// Remetente (etiqueta SuperFrete)
+export const SENDER = {
+  name: "Leandro Augusto da Silva",
+  document: "39602836873",
+  address: "Rua Osvaldo Jose Barbosa",
+  number: "186",
+  complement: "",
+  district: "Sao Miguel Paulista",
+  city: "Sao Paulo",
+  state_abbr: "SP",
+  postal_code: ORIGIN_CEP,
+  email: "leandro_cjc@hotmail.com",
+  phone: "11937460073",
+};
+
+// Cria o envio no carrinho do SuperFrete (aparece no painel para pagar/gerar etiqueta).
+export async function createSuperFreteOrder(db: any, orderId: string): Promise<string | null> {
+  const token = process.env.SUPERFRETE_TOKEN;
+  if (!token) return null;
+  const { data: order } = await db.from("orders").select("*").eq("id", orderId).maybeSingle();
+  if (!order || order.superfrete_id || !order.shipping_service_id) return order?.superfrete_id ?? null;
+  const { data: items } = await db
+    .from("order_items")
+    .select("product_id, product_name, unit_price, quantity")
+    .eq("order_id", orderId);
+  const ids = (items ?? []).map((i: any) => i.product_id).filter(Boolean);
+  const { data: prods } = await db
+    .from("products")
+    .select("id, weight_kg, height_cm, width_cm, length_cm")
+    .in("id", ids.length ? ids : ["00000000-0000-0000-0000-000000000000"]);
+  let weight = 0, height = 0, width = 11, length = 16, value = 0;
+  for (const it of items ?? []) {
+    const p: any = prods?.find((x: any) => x.id === it.product_id) ?? {};
+    const q = Number(it.quantity);
+    weight += (Number(p.weight_kg) || 0.3) * q;
+    height += Math.max(2, Number(p.height_cm) || 2) * q;
+    width = Math.max(width, Number(p.width_cm) || 11);
+    length = Math.max(length, Number(p.length_cm) || 16);
+    value += Number(it.unit_price) * q;
+  }
+  const body = {
+    from: SENDER,
+    to: {
+      name: order.customer_name,
+      address: order.rua,
+      number: order.numero,
+      complement: order.complemento ?? "",
+      district: order.bairro,
+      city: order.cidade,
+      state_abbr: order.uf,
+      postal_code: String(order.cep).replace(/\D/g, ""),
+      email: order.email,
+    },
+    service: Number(order.shipping_service_id),
+    products: (items ?? []).map((i: any) => ({
+      name: i.product_name,
+      quantity: Number(i.quantity),
+      unitary_value: Number(i.unit_price),
+    })),
+    volumes: { height, width, length, weight },
+    options: { insurance_value: 0, receipt: false, own_hand: false, non_commercial: true },
+    platform: "TudoTop",
+    tag: orderId,
+  };
+  const res = await fetch("https://api.superfrete.com/api/v0/cart", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+      Accept: "application/json",
+      "User-Agent": "TudoTop (leandro_cjc@hotmail.com)",
+    },
+    body: JSON.stringify(body),
+  });
+  const json: any = await res.json().catch(() => null);
+  if (!res.ok || !json?.id) {
+    console.error("[superfrete] criar envio falhou:", res.status, json);
+    return null;
+  }
+  const sfId = String(json.id);
+  await db.from("orders").update({ superfrete_id: sfId }).eq("id", orderId);
+  return sfId;
+}
