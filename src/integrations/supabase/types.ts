@@ -114,8 +114,10 @@ export type Database = {
           shipping_days: number | null
           shipping_price: number
           shipping_service: string | null
+          shipping_service_id: string | null
           shipping_status: string
           status: string
+          superfrete_id: string | null
           total: number
           uf: string
           updated_at: string
@@ -139,8 +141,10 @@ export type Database = {
           shipping_days?: number | null
           shipping_price?: number
           shipping_service?: string | null
+          shipping_service_id?: string | null
           shipping_status?: string
           status?: string
+          superfrete_id?: string | null
           total?: number
           uf: string
           updated_at?: string
@@ -164,8 +168,10 @@ export type Database = {
           shipping_days?: number | null
           shipping_price?: number
           shipping_service?: string | null
+          shipping_service_id?: string | null
           shipping_status?: string
           status?: string
+          superfrete_id?: string | null
           total?: number
           uf?: string
           updated_at?: string
