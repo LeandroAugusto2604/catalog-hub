@@ -152,6 +152,11 @@ export function CartSheet({ open, onOpenChange }: Props) {
       toast.error(addr.error.issues[0].message);
       return;
     }
+    const cpf = cpfSchema.safeParse(form.cpf ?? "");
+    if (!cpf.success) {
+      toast.error(cpf.error.issues[0].message);
+      return;
+    }
 
     setPayingNow(true);
     try {
