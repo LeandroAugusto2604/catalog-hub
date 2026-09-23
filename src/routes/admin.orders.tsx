@@ -230,6 +230,15 @@ function OrdersAdmin() {
                         ))}
                       </SelectContent>
                     </Select>
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      className="h-8 ml-auto"
+                      onClick={() => removeOrder(o.id, o.customer_name)}
+                    >
+                      <Trash2 className="h-4 w-4 mr-1" />
+                      Remover pedido
+                    </Button>
                   </div>
                 </div>
               )}
