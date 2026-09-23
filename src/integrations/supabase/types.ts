@@ -111,6 +111,9 @@ export type Database = {
           numero: string
           payment_method: string | null
           rua: string
+          shipping_days: number | null
+          shipping_price: number
+          shipping_service: string | null
           shipping_status: string
           status: string
           total: number
@@ -133,6 +136,9 @@ export type Database = {
           numero: string
           payment_method?: string | null
           rua: string
+          shipping_days?: number | null
+          shipping_price?: number
+          shipping_service?: string | null
           shipping_status?: string
           status?: string
           total?: number
@@ -155,6 +161,9 @@ export type Database = {
           numero?: string
           payment_method?: string | null
           rua?: string
+          shipping_days?: number | null
+          shipping_price?: number
+          shipping_service?: string | null
           shipping_status?: string
           status?: string
           total?: number
@@ -170,42 +179,54 @@ export type Database = {
           category_id: string | null
           created_at: string
           description: string | null
+          height_cm: number
           id: string
           image_url: string | null
           image_urls: string[]
+          length_cm: number
           name: string
           price: number
           sort_order: number
           updated_at: string
           video_url: string | null
+          weight_kg: number
+          width_cm: number
         }
         Insert: {
           active?: boolean
           category_id?: string | null
           created_at?: string
           description?: string | null
+          height_cm?: number
           id?: string
           image_url?: string | null
           image_urls?: string[]
+          length_cm?: number
           name: string
           price?: number
           sort_order?: number
           updated_at?: string
           video_url?: string | null
+          weight_kg?: number
+          width_cm?: number
         }
         Update: {
           active?: boolean
           category_id?: string | null
           created_at?: string
           description?: string | null
+          height_cm?: number
           id?: string
           image_url?: string | null
           image_urls?: string[]
+          length_cm?: number
           name?: string
           price?: number
           sort_order?: number
           updated_at?: string
           video_url?: string | null
+          weight_kg?: number
+          width_cm?: number
         }
         Relationships: [
           {

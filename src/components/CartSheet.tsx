@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { useCart, formatBRL } from "@/lib/cart";
 import { toast } from "sonner";
+import { ShippingCalculator, type ShippingOption } from "@/components/ShippingCalculator";
 import { z } from "zod";
 
 const STORE_WHATSAPP = "5511937460073";
@@ -68,6 +69,7 @@ export function CartSheet({ open, onOpenChange }: Props) {
   });
   const [submitting, setSubmitting] = useState(false);
   const [payingNow, setPayingNow] = useState(false);
+  const [shipping, setShipping] = useState<ShippingOption | null>(null);
 
   const lookupCep = async (raw: string) => {
     const cep = raw.replace(/\D/g, "");
@@ -158,6 +160,11 @@ export function CartSheet({ open, onOpenChange }: Props) {
       return;
     }
 
+    if (!shipping) {
+      toast.error("Calcule e escolha uma opção de frete");
+      return;
+    }
+
     setPayingNow(true);
     try {
       const response = await fetch("/api/create-payment", {
@@ -171,6 +178,7 @@ export function CartSheet({ open, onOpenChange }: Props) {
           cpf: cpf.data,
           ...addr.data,
           complemento: addr.data.complemento ?? null,
+          shipping_service_id: shipping.id,
           items: items.map((i) => ({ product_id: i.id, quantity: i.quantity })),
         }),
       });
@@ -255,9 +263,34 @@ export function CartSheet({ open, onOpenChange }: Props) {
             className="border-t border-border p-6 space-y-3 bg-card/50 overflow-y-auto max-h-[70vh]"
           >
             <div className="flex items-center justify-between text-sm">
-              <span className="text-muted-foreground">Total</span>
-              <span className="text-xl font-bold text-primary">{formatBRL(total)}</span>
+              <span className="text-muted-foreground">Produtos</span>
+              <span className="font-semibold">{formatBRL(total)}</span>
             </div>
+            {mode === "buy" && shipping && (
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-muted-foreground">Frete ({shipping.name})</span>
+                <span className="font-semibold">{formatBRL(shipping.price)}</span>
+              </div>
+            )}
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-muted-foreground">Total</span>
+              <span className="text-xl font-bold text-primary">
+                {formatBRL(total + (mode === "buy" && shipping ? shipping.price : 0))}
+              </span>
+            </div>
+            {mode === "buy" && (
+              <ShippingCalculator
+                items={items.map((i) => ({ product_id: i.id, quantity: i.quantity }))}
+                cep={address.cep}
+                onCepChange={(v) => {
+                  setAddress((a) => ({ ...a, cep: v }));
+                  setShipping(null);
+                  lookupCep(v);
+                }}
+                selectedId={shipping?.id ?? null}
+                onSelect={setShipping}
+              />
+            )}
 
             <div className="grid grid-cols-2 gap-2 p-1 rounded-xl bg-muted/50">
               <button
@@ -355,6 +388,7 @@ export function CartSheet({ open, onOpenChange }: Props) {
                       onChange={(e) => {
                         const v = e.target.value;
                         setAddress({ ...address, cep: v });
+                        setShipping(null);
                         lookupCep(v);
                       }}
                       required

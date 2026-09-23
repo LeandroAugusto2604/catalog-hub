@@ -42,3 +42,6 @@ VITE_MP_PUBLIC_KEY="APP_USR-6e8b5daf-6b92-434d-8b2f-2c7ca92e0a85"
 
 # Senha interna já configurada no banco — NÃO altere.
 ORDER_WEBHOOK_TOKEN="tt_9f4c1e77a2b54d3e8c06ab715d2f8e41"
+
+# Frete (SuperFrete) — cole seu token aqui
+SUPERFRETE_TOKEN=""
