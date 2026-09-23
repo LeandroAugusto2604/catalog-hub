@@ -38,46 +38,57 @@ export function ProductCard({ product }: { product: ProductCardData }) {
 
   return (
     <div className="card-elevated rounded-2xl overflow-hidden flex flex-col group">
-      <div className="aspect-square bg-muted relative overflow-hidden">
-        {current?.type === "video" ? (
-          <video
-            src={current.url}
-            controls
-            playsInline
-            preload="metadata"
-            className="w-full h-full object-cover bg-black"
-          />
-        ) : current ? (
-          <img
-            src={current.url}
-            alt={product.name}
-            loading="lazy"
-            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center text-muted-foreground text-sm">
-            Sem imagem
-          </div>
-        )}
-        {media.length > 1 && current?.type !== "video" && (
-          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5">
-            {media.map((_, i) => (
-              <button
-                key={i}
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setActive(i);
-                }}
-                aria-label={`Foto ${i + 1}`}
-                className={`h-1.5 rounded-full transition-all ${
-                  i === active ? "w-5 bg-white" : "w-1.5 bg-white/60 hover:bg-white/80"
-                }`}
+        <Link
+          to="/produto/$id"
+          params={{ id: product.id }}
+          className="block aspect-square bg-muted relative overflow-hidden cursor-pointer"
+          aria-label={`Ver ${product.name}`}
+        >
+          {current?.type === "video" ? (
+            <span
+              className="block w-full h-full"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <video
+                src={current.url}
+                controls
+                playsInline
+                preload="metadata"
+                className="w-full h-full object-cover bg-black"
               />
-            ))}
-          </div>
-        )}
-      </div>
+            </span>
+          ) : current ? (
+            <img
+              src={current.url}
+              alt={product.name}
+              loading="lazy"
+              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center text-muted-foreground text-sm">
+              Sem imagem
+            </div>
+          )}
+          {media.length > 1 && current?.type !== "video" && (
+            <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5">
+              {media.map((_, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    setActive(i);
+                  }}
+                  aria-label={`Foto ${i + 1}`}
+                  className={`h-1.5 rounded-full transition-all ${
+                    i === active ? "w-5 bg-white" : "w-1.5 bg-white/60 hover:bg-white/80"
+                  }`}
+                />
+              ))}
+            </div>
+          )}
+        </Link>
       {media.length > 1 && (
         <div className="px-3 pt-3 flex gap-1.5 overflow-x-auto">
           {media.map((m, i) => (
