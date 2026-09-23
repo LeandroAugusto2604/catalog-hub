@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
+import { getPublicSupabase } from "@/lib/supabase-public.server";
 
 const idSchema = z.string().uuid();
 
@@ -12,25 +13,24 @@ export const Route = createFileRoute("/api/order-status/$id")({
           return Response.json({ order: null }, { status: 400 });
         }
 
-        const SUPABASE_URL = process.env.SUPABASE_URL;
-        const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
-        if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
+        try {
+          const supabase = getPublicSupabase();
+          // Função SECURITY DEFINER: devolve apenas os campos públicos do pedido.
+          const { data, error } = await supabase.rpc("get_order_status", {
+            _order_id: parsed.data,
+          });
+
+          if (error) {
+            console.error("[order-status] consulta falhou:", error.message);
+            return Response.json({ error: "Falha ao consultar pedido" }, { status: 500 });
+          }
+
+          const order = Array.isArray(data) ? data[0] ?? null : data ?? null;
+          return Response.json({ order }, { status: order ? 200 : 404 });
+        } catch (err: any) {
+          console.error("[order-status] error:", err?.message ?? err);
           return Response.json({ error: "Banco não configurado" }, { status: 500 });
         }
-
-        const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-        const { data, error } = await supabaseAdmin
-          .from("orders")
-          .select("id,status,total,customer_name,created_at")
-          .eq("id", parsed.data)
-          .maybeSingle();
-
-        if (error) {
-          console.error("[order-status] consulta falhou:", error.message);
-          return Response.json({ error: "Falha ao consultar pedido" }, { status: 500 });
-        }
-
-        return Response.json({ order: data ?? null }, { status: data ? 200 : 404 });
       },
     },
   },

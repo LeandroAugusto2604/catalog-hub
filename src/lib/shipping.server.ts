@@ -15,16 +15,8 @@ export async function quoteShipping(
 ): Promise<ShippingOption[]> {
   const token = process.env.SUPERFRETE_TOKEN;
   if (!token) throw new Error("Frete não configurado");
-  const { createClient } = await import("@supabase/supabase-js");
-  const url = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
-  const key =
-    process.env.SUPABASE_PUBLISHABLE_KEY ||
-    process.env.VITE_SUPABASE_PUBLISHABLE_KEY ||
-    process.env.SUPABASE_ANON_KEY;
-  if (!url || !key) throw new Error("Configuração do banco ausente");
-  const db = createClient(url, key, {
-    auth: { persistSession: false, autoRefreshToken: false },
-  });
+  const { getPublicSupabase } = await import("@/lib/supabase-public.server");
+  const db = getPublicSupabase();
   const ids = [...new Set(items.map((i) => i.product_id))];
   const { data: products, error } = await db
     .from("products")
