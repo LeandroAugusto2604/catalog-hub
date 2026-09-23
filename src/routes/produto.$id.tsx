@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { SiteHeader } from "@/components/SiteHeader";
+import { SiteFooter } from "@/components/SiteFooter";
 import { CartSheet } from "@/components/CartSheet";
 import { useCart, formatBRL } from "@/lib/cart";
 import { ShippingCalculator } from "@/components/ShippingCalculator";
@@ -347,6 +348,8 @@ function ProductPage() {
           </div>
         </div>
       )}
+
+      <SiteFooter />
     </div>
   );
 }
