@@ -177,7 +177,7 @@ function ProductPage() {
           <div className="order-1 lg:order-2 relative">
             <div
               ref={stageRef}
-              className="relative aspect-square rounded-xl overflow-hidden bg-muted"
+              className="relative aspect-square w-full max-w-[420px] lg:max-w-[460px] mx-auto rounded-xl overflow-hidden bg-muted"
               onMouseEnter={() => current?.type === "image" && setZoom(true)}
               onMouseLeave={() => {
                 setZoom(false);
