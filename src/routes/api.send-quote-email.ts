@@ -127,6 +127,13 @@ export const Route = createFileRoute("/api/send-quote-email")({
             ? `<p style="background:#f5f5f5;padding:12px;border-radius:8px"><strong>Observações:</strong><br>${quote.notes}</p>`
             : "";
 
+          const STORE_WHATSAPP = "11937460073";
+          const contactBlock = `
+            <p style="margin:16px 0;padding:12px;background:#fff7ed;border-radius:8px;font-size:14px">
+              Fale com a gente no WhatsApp <strong>(11) 93746-0073</strong> —
+              <a href="https://wa.me/55${STORE_WHATSAPP}" style="color:#ea580c">abrir conversa</a>
+            </p>`;
+
           const wrap = (inner: string) => `
             <div style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto;padding:24px;background:#fff;color:#111">${inner}</div>`;
 
@@ -137,6 +144,7 @@ export const Route = createFileRoute("/api/send-quote-email")({
             <h3 style="margin:24px 0 0;font-size:15px">Itens solicitados</h3>
             ${itemsTable}
             ${notesBlock}
+            ${contactBlock}
             <p style="font-size:12px;color:#666;margin-top:24px">Este é um resumo do seu pedido de orçamento. Se algum dado estiver errado, responda a este e-mail.</p>
           `);
 
