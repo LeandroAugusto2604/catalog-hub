@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as MeuPedidoRouteImport } from './routes/meu-pedido'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
@@ -18,6 +19,7 @@ import { Route as ProdutoIdRouteImport } from './routes/produto.$id'
 import { Route as PedidoIdRouteImport } from './routes/pedido.$id'
 import { Route as ApiShippingQuoteRouteImport } from './routes/api.shipping-quote'
 import { Route as ApiSendQuoteEmailRouteImport } from './routes/api.send-quote-email'
+import { Route as ApiOrderLookupRouteImport } from './routes/api.order-lookup'
 import { Route as ApiCreatePaymentRouteImport } from './routes/api.create-payment'
 import { Route as AdminQuotesRouteImport } from './routes/admin.quotes'
 import { Route as AdminOrdersRouteImport } from './routes/admin.orders'
@@ -27,6 +29,11 @@ import { Route as ApiOrderStatusIdRouteImport } from './routes/api.order-status.
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
   path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MeuPedidoRoute = MeuPedidoRouteImport.update({
+  id: '/meu-pedido',
+  path: '/meu-pedido',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -69,6 +76,11 @@ const ApiSendQuoteEmailRoute = ApiSendQuoteEmailRouteImport.update({
   path: '/api/send-quote-email',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiOrderLookupRoute = ApiOrderLookupRouteImport.update({
+  id: '/api/order-lookup',
+  path: '/api/order-lookup',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiCreatePaymentRoute = ApiCreatePaymentRouteImport.update({
   id: '/api/create-payment',
   path: '/api/create-payment',
@@ -100,10 +112,12 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRoute
+  '/meu-pedido': typeof MeuPedidoRoute
   '/reset-password': typeof ResetPasswordRoute
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/quotes': typeof AdminQuotesRoute
   '/api/create-payment': typeof ApiCreatePaymentRoute
+  '/api/order-lookup': typeof ApiOrderLookupRoute
   '/api/send-quote-email': typeof ApiSendQuoteEmailRoute
   '/api/shipping-quote': typeof ApiShippingQuoteRoute
   '/pedido/$id': typeof PedidoIdRoute
@@ -115,10 +129,12 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/meu-pedido': typeof MeuPedidoRoute
   '/reset-password': typeof ResetPasswordRoute
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/quotes': typeof AdminQuotesRoute
   '/api/create-payment': typeof ApiCreatePaymentRoute
+  '/api/order-lookup': typeof ApiOrderLookupRoute
   '/api/send-quote-email': typeof ApiSendQuoteEmailRoute
   '/api/shipping-quote': typeof ApiShippingQuoteRoute
   '/pedido/$id': typeof PedidoIdRoute
@@ -132,10 +148,12 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRoute
+  '/meu-pedido': typeof MeuPedidoRoute
   '/reset-password': typeof ResetPasswordRoute
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/quotes': typeof AdminQuotesRoute
   '/api/create-payment': typeof ApiCreatePaymentRoute
+  '/api/order-lookup': typeof ApiOrderLookupRoute
   '/api/send-quote-email': typeof ApiSendQuoteEmailRoute
   '/api/shipping-quote': typeof ApiShippingQuoteRoute
   '/pedido/$id': typeof PedidoIdRoute
@@ -150,10 +168,12 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/auth'
+    | '/meu-pedido'
     | '/reset-password'
     | '/admin/orders'
     | '/admin/quotes'
     | '/api/create-payment'
+    | '/api/order-lookup'
     | '/api/send-quote-email'
     | '/api/shipping-quote'
     | '/pedido/$id'
@@ -165,10 +185,12 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/meu-pedido'
     | '/reset-password'
     | '/admin/orders'
     | '/admin/quotes'
     | '/api/create-payment'
+    | '/api/order-lookup'
     | '/api/send-quote-email'
     | '/api/shipping-quote'
     | '/pedido/$id'
@@ -181,10 +203,12 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/auth'
+    | '/meu-pedido'
     | '/reset-password'
     | '/admin/orders'
     | '/admin/quotes'
     | '/api/create-payment'
+    | '/api/order-lookup'
     | '/api/send-quote-email'
     | '/api/shipping-quote'
     | '/pedido/$id'
@@ -198,8 +222,10 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRouteWithChildren
   AuthRoute: typeof AuthRoute
+  MeuPedidoRoute: typeof MeuPedidoRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   ApiCreatePaymentRoute: typeof ApiCreatePaymentRoute
+  ApiOrderLookupRoute: typeof ApiOrderLookupRoute
   ApiSendQuoteEmailRoute: typeof ApiSendQuoteEmailRoute
   ApiShippingQuoteRoute: typeof ApiShippingQuoteRoute
   PedidoIdRoute: typeof PedidoIdRoute
@@ -215,6 +241,13 @@ declare module '@tanstack/react-router' {
       path: '/reset-password'
       fullPath: '/reset-password'
       preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/meu-pedido': {
+      id: '/meu-pedido'
+      path: '/meu-pedido'
+      fullPath: '/meu-pedido'
+      preLoaderRoute: typeof MeuPedidoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -273,6 +306,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiSendQuoteEmailRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/order-lookup': {
+      id: '/api/order-lookup'
+      path: '/api/order-lookup'
+      fullPath: '/api/order-lookup'
+      preLoaderRoute: typeof ApiOrderLookupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/create-payment': {
       id: '/api/create-payment'
       path: '/api/create-payment'
@@ -329,8 +369,10 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRouteWithChildren,
   AuthRoute: AuthRoute,
+  MeuPedidoRoute: MeuPedidoRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   ApiCreatePaymentRoute: ApiCreatePaymentRoute,
+  ApiOrderLookupRoute: ApiOrderLookupRoute,
   ApiSendQuoteEmailRoute: ApiSendQuoteEmailRoute,
   ApiShippingQuoteRoute: ApiShippingQuoteRoute,
   PedidoIdRoute: PedidoIdRoute,
