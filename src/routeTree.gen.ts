@@ -16,6 +16,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as ProdutoIdRouteImport } from './routes/produto.$id'
 import { Route as PedidoIdRouteImport } from './routes/pedido.$id'
+import { Route as ApiShippingQuoteRouteImport } from './routes/api.shipping-quote'
 import { Route as ApiSendQuoteEmailRouteImport } from './routes/api.send-quote-email'
 import { Route as ApiCreatePaymentRouteImport } from './routes/api.create-payment'
 import { Route as AdminQuotesRouteImport } from './routes/admin.quotes'
@@ -56,6 +57,11 @@ const ProdutoIdRoute = ProdutoIdRouteImport.update({
 const PedidoIdRoute = PedidoIdRouteImport.update({
   id: '/pedido/$id',
   path: '/pedido/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiShippingQuoteRoute = ApiShippingQuoteRouteImport.update({
+  id: '/api/shipping-quote',
+  path: '/api/shipping-quote',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiSendQuoteEmailRoute = ApiSendQuoteEmailRouteImport.update({
@@ -99,6 +105,7 @@ export interface FileRoutesByFullPath {
   '/admin/quotes': typeof AdminQuotesRoute
   '/api/create-payment': typeof ApiCreatePaymentRoute
   '/api/send-quote-email': typeof ApiSendQuoteEmailRoute
+  '/api/shipping-quote': typeof ApiShippingQuoteRoute
   '/pedido/$id': typeof PedidoIdRoute
   '/produto/$id': typeof ProdutoIdRoute
   '/admin/': typeof AdminIndexRoute
@@ -113,6 +120,7 @@ export interface FileRoutesByTo {
   '/admin/quotes': typeof AdminQuotesRoute
   '/api/create-payment': typeof ApiCreatePaymentRoute
   '/api/send-quote-email': typeof ApiSendQuoteEmailRoute
+  '/api/shipping-quote': typeof ApiShippingQuoteRoute
   '/pedido/$id': typeof PedidoIdRoute
   '/produto/$id': typeof ProdutoIdRoute
   '/admin': typeof AdminIndexRoute
@@ -129,6 +137,7 @@ export interface FileRoutesById {
   '/admin/quotes': typeof AdminQuotesRoute
   '/api/create-payment': typeof ApiCreatePaymentRoute
   '/api/send-quote-email': typeof ApiSendQuoteEmailRoute
+  '/api/shipping-quote': typeof ApiShippingQuoteRoute
   '/pedido/$id': typeof PedidoIdRoute
   '/produto/$id': typeof ProdutoIdRoute
   '/admin/': typeof AdminIndexRoute
@@ -146,6 +155,7 @@ export interface FileRouteTypes {
     | '/admin/quotes'
     | '/api/create-payment'
     | '/api/send-quote-email'
+    | '/api/shipping-quote'
     | '/pedido/$id'
     | '/produto/$id'
     | '/admin/'
@@ -160,6 +170,7 @@ export interface FileRouteTypes {
     | '/admin/quotes'
     | '/api/create-payment'
     | '/api/send-quote-email'
+    | '/api/shipping-quote'
     | '/pedido/$id'
     | '/produto/$id'
     | '/admin'
@@ -175,6 +186,7 @@ export interface FileRouteTypes {
     | '/admin/quotes'
     | '/api/create-payment'
     | '/api/send-quote-email'
+    | '/api/shipping-quote'
     | '/pedido/$id'
     | '/produto/$id'
     | '/admin/'
@@ -189,6 +201,7 @@ export interface RootRouteChildren {
   ResetPasswordRoute: typeof ResetPasswordRoute
   ApiCreatePaymentRoute: typeof ApiCreatePaymentRoute
   ApiSendQuoteEmailRoute: typeof ApiSendQuoteEmailRoute
+  ApiShippingQuoteRoute: typeof ApiShippingQuoteRoute
   PedidoIdRoute: typeof PedidoIdRoute
   ProdutoIdRoute: typeof ProdutoIdRoute
   ApiOrderStatusIdRoute: typeof ApiOrderStatusIdRoute
@@ -244,6 +257,13 @@ declare module '@tanstack/react-router' {
       path: '/pedido/$id'
       fullPath: '/pedido/$id'
       preLoaderRoute: typeof PedidoIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/shipping-quote': {
+      id: '/api/shipping-quote'
+      path: '/api/shipping-quote'
+      fullPath: '/api/shipping-quote'
+      preLoaderRoute: typeof ApiShippingQuoteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/send-quote-email': {
@@ -312,6 +332,7 @@ const rootRouteChildren: RootRouteChildren = {
   ResetPasswordRoute: ResetPasswordRoute,
   ApiCreatePaymentRoute: ApiCreatePaymentRoute,
   ApiSendQuoteEmailRoute: ApiSendQuoteEmailRoute,
+  ApiShippingQuoteRoute: ApiShippingQuoteRoute,
   PedidoIdRoute: PedidoIdRoute,
   ProdutoIdRoute: ProdutoIdRoute,
   ApiOrderStatusIdRoute: ApiOrderStatusIdRoute,
