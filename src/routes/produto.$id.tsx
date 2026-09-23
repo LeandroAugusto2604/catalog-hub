@@ -329,14 +329,14 @@ function ProductPage() {
               </button>
             </>
           )}
-          <div className="max-w-5xl max-h-[85vh]" onClick={(e) => e.stopPropagation()}>
+          <div className="max-w-3xl max-h-[72vh]" onClick={(e) => e.stopPropagation()}>
             {current.type === "video" ? (
-              <video src={current.url} controls playsInline className="max-h-[85vh] rounded-xl" />
+              <video src={current.url} controls playsInline className="max-h-[72vh] rounded-xl" />
             ) : (
               <img
                 src={current.url}
                 alt={product.name}
-                className="max-h-[85vh] w-auto rounded-xl object-contain"
+                className="max-h-[72vh] w-auto rounded-xl object-contain"
               />
             )}
           </div>
