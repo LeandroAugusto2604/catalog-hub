@@ -4,6 +4,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import nodemailer from "nodemailer";
 import { getPublicSupabase } from "@/lib/supabase-public.server";
+import { businessDaysDate } from "@/lib/delivery";
 
 const fmt = (n: number) =>
   n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
@@ -115,17 +116,16 @@ export const Route = createFileRoute("/api/public/mercadopago-webhook")({
               process.env.ADMIN_EMAIL ?? "leandro_cjc@hotmail.com";
             const customerEmail = shipData?.order?.email || payment?.payer?.email;
             const days = Number(shipData?.order?.shipping_days ?? 0);
-            let deliveryText = "";
-            if (days > 0) {
-              const d = new Date();
-              let left = days;
-              while (left > 0) {
-                d.setDate(d.getDate() + 1);
-                const w = d.getDay();
-                if (w !== 0 && w !== 6) left--;
-              }
-              deliveryText = d.toLocaleDateString("pt-BR", { weekday: "long", day: "2-digit", month: "2-digit", year: "numeric", timeZone: "America/Sao_Paulo" });
-            }
+            const deliveryText = days > 0 ? businessDaysDate(days) : "";
+            const o: any = shipData?.order ?? {};
+            const its: any[] = shipData?.items ?? [];
+            const esc = (v: any) => String(v ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]!);
+            const itemsTable = its.length
+              ? `<table style="width:100%;border-collapse:collapse;margin:16px 0">${its.map((i) => `<tr><td style="padding:8px;border-bottom:1px solid #eee">${Number(i.quantity)}× ${esc(i.product_name)}</td><td style="padding:8px;border-bottom:1px solid #eee;text-align:right">${fmt(Number(i.unit_price) * Number(i.quantity))}</td></tr>`).join("")}<tr><td style="padding:8px;border-bottom:1px solid #eee">Frete ${esc(o.shipping_service ?? "")}</td><td style="padding:8px;border-bottom:1px solid #eee;text-align:right;color:#16a34a;font-weight:bold">Grátis</td></tr><tr><td style="padding:12px 8px;font-weight:bold">Total pago</td><td style="padding:12px 8px;text-align:right;font-weight:bold;color:#ea580c">${fmt(amount)}</td></tr></table>`
+              : "";
+            const addressHtml = o.rua
+              ? `<h3 style="font-size:15px;margin:24px 0 8px">Endereço de entrega</h3><p style="font-size:14px;color:#444">${esc(o.rua)}, ${esc(o.numero)}${o.complemento ? ` - ${esc(o.complemento)}` : ""}<br>${esc(o.bairro)} — ${esc(o.cidade)}/${esc(String(o.uf ?? "").toUpperCase())}<br>CEP ${esc(o.cep)}</p>`
+              : "";
             const firstName = String(shipData?.order?.customer_name ?? "").split(" ")[0];
             const amount = Number(payment?.transaction_amount ?? 0);
 
@@ -154,6 +154,8 @@ export const Route = createFileRoute("/api/public/mercadopago-webhook")({
                         <h2 style="color:#ea580c;margin:0 0 16px">Pagamento confirmado</h2>
                         <p>${firstName ? `Olá, ${firstName}! ` : ""}Recebemos seu pagamento de <strong>${fmt(amount)}</strong>. Já estamos preparando o envio.</p>
                         ${deliveryText ? `<p>Frete: <strong>grátis</strong>${shipData?.order?.shipping_service ? ` (${shipData.order.shipping_service})` : ""}<br>Previsão de entrega: <strong>${deliveryText}</strong></p>` : ""}
+                        ${itemsTable}
+                        ${addressHtml}
                         <p>Dúvidas? Fale com a gente no WhatsApp (11) 93746-0073.</p>
                         <p style="font-size:12px;color:#666;margin-top:24px">Pedido nº ${orderId}</p>
                       `),
@@ -166,7 +168,10 @@ export const Route = createFileRoute("/api/public/mercadopago-webhook")({
                   html: wrap(`
                     <h2 style="color:#ea580c;margin:0 0 16px">Pagamento aprovado</h2>
                     <p>Forma: <strong>${method ?? "-"}</strong><br>Valor: <strong>${fmt(amount)}</strong></p>
-                    <p>Veja o endereço de entrega e os itens no painel, em Pedidos pagos.</p>
+                    <p>Cliente: <strong>${esc(o.customer_name)}</strong> — WhatsApp ${esc(o.whatsapp)}</p>
+                    ${itemsTable}
+                    ${addressHtml}
+                    ${deliveryText ? `<p>Previsão de entrega: <strong>${deliveryText}</strong></p>` : ""}
                     <p style="font-size:12px;color:#666;margin-top:24px">Pedido nº ${orderId}</p>
                   `),
                 }),
