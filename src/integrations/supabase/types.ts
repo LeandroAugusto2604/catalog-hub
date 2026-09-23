@@ -109,6 +109,7 @@ export type Database = {
           mp_preference_id: string | null
           notes: string | null
           numero: string
+          order_number: number
           payment_method: string | null
           rua: string
           shipping_days: number | null
@@ -136,6 +137,7 @@ export type Database = {
           mp_preference_id?: string | null
           notes?: string | null
           numero: string
+          order_number?: number
           payment_method?: string | null
           rua: string
           shipping_days?: number | null
@@ -163,6 +165,7 @@ export type Database = {
           mp_preference_id?: string | null
           notes?: string | null
           numero?: string
+          order_number?: number
           payment_method?: string | null
           rua?: string
           shipping_days?: number | null
@@ -387,6 +390,7 @@ export type Database = {
           created_at: string
           customer_name: string
           id: string
+          order_number: number
           status: string
           total: number
         }[]
@@ -397,6 +401,19 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      lookup_order: {
+        Args: { _name: string; _number: number }
+        Returns: {
+          created_at: string
+          order_number: number
+          shipping_days: number
+          shipping_service: string
+          shipping_status: string
+          status: string
+          total: number
+          updated_at: string
+        }[]
       }
       release_superfrete: {
         Args: { _order_id: string; _token: string }
