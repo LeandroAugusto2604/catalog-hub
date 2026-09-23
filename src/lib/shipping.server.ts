@@ -15,16 +15,8 @@ export async function quoteShipping(
 ): Promise<ShippingOption[]> {
   const token = process.env.SUPERFRETE_TOKEN;
   if (!token) throw new Error("Frete não configurado");
-  const { createClient } = await import("@supabase/supabase-js");
-  const url = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
-  const key =
-    process.env.SUPABASE_PUBLISHABLE_KEY ||
-    process.env.VITE_SUPABASE_PUBLISHABLE_KEY ||
-    process.env.SUPABASE_ANON_KEY;
-  if (!url || !key) throw new Error("Configuração do banco ausente");
-  const db = createClient(url, key, {
-    auth: { persistSession: false, autoRefreshToken: false },
-  });
+  const { getPublicSupabase } = await import("@/lib/supabase-public.server");
+  const db = getPublicSupabase();
   const ids = [...new Set(items.map((i) => i.product_id))];
   const { data: products, error } = await db
     .from("products")
@@ -100,15 +92,13 @@ export const SENDER = {
 };
 
 // Cria o envio no carrinho do SuperFrete (aparece no painel para pagar/gerar etiqueta).
-export async function createSuperFreteOrder(db: any, orderId: string): Promise<string | null> {
+// Recebe o pedido e os itens já lidos do banco (função protegida por token).
+export async function createSuperFreteOrder(order: any, items: any[]): Promise<string | null> {
   const token = process.env.SUPERFRETE_TOKEN;
   if (!token) return null;
-  const { data: order } = await db.from("orders").select("*").eq("id", orderId).maybeSingle();
   if (!order || order.superfrete_id || !order.shipping_service_id) return order?.superfrete_id ?? null;
-  const { data: items } = await db
-    .from("order_items")
-    .select("product_id, product_name, unit_price, quantity")
-    .eq("order_id", orderId);
+  const { getPublicSupabase } = await import("@/lib/supabase-public.server");
+  const db = getPublicSupabase();
   const ids = (items ?? []).map((i: any) => i.product_id).filter(Boolean);
   const { data: prods } = await db
     .from("products")
@@ -146,7 +136,7 @@ export async function createSuperFreteOrder(db: any, orderId: string): Promise<s
     volumes: { height, width, length, weight },
     options: { insurance_value: 0, receipt: false, own_hand: false, non_commercial: true },
     platform: "TudoTop",
-    tag: orderId,
+    tag: String(order.id),
   };
   const res = await fetch("https://api.superfrete.com/api/v0/cart", {
     method: "POST",
@@ -163,7 +153,5 @@ export async function createSuperFreteOrder(db: any, orderId: string): Promise<s
     console.error("[superfrete] criar envio falhou:", res.status, json);
     return null;
   }
-  const sfId = String(json.id);
-  await db.from("orders").update({ superfrete_id: sfId }).eq("id", orderId);
-  return sfId;
+  return String(json.id) || null;
 }

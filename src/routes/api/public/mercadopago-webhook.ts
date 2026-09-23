@@ -3,6 +3,7 @@
 //   https://SEU-DOMINIO/api/public/mercadopago-webhook?token=ORDER_WEBHOOK_TOKEN
 import { createFileRoute } from "@tanstack/react-router";
 import nodemailer from "nodemailer";
+import { getPublicSupabase } from "@/lib/supabase-public.server";
 
 const fmt = (n: number) =>
   n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
@@ -67,13 +68,7 @@ export const Route = createFileRoute("/api/public/mercadopago-webhook")({
                 : (payment?.payment_type_id ?? null);
           if (!orderId) return new Response("ok");
 
-          const SUPABASE_URL = process.env.SUPABASE_URL;
-          const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
-          if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) return new Response("ok");
-
-          const { supabaseAdmin: supabase } = await import(
-            "@/integrations/supabase/client.server"
-          );
+          const supabase = getPublicSupabase();
 
           const { error } = await supabase.rpc("confirm_order_payment", {
             _order_id: orderId,
@@ -86,8 +81,27 @@ export const Route = createFileRoute("/api/public/mercadopago-webhook")({
 
           if (status === "pago") {
             try {
-              const { createSuperFreteOrder } = await import("@/lib/shipping.server");
-              await createSuperFreteOrder(supabase, orderId);
+              // Dados do pedido via função protegida por token no banco.
+              const { data: shipData } = await supabase.rpc(
+                "get_order_for_shipping",
+                { _token: expected, _order_id: orderId }
+              );
+              if (shipData?.order && !shipData.order.superfrete_id) {
+                const { createSuperFreteOrder } = await import(
+                  "@/lib/shipping.server"
+                );
+                const sfId = await createSuperFreteOrder(
+                  shipData.order,
+                  shipData.items ?? []
+                );
+                if (sfId) {
+                  await supabase.rpc("set_superfrete_id", {
+                    _token: expected,
+                    _order_id: orderId,
+                    _sf_id: sfId,
+                  });
+                }
+              }
             } catch (e) {
               console.error("[mp-webhook] superfrete:", e);
             }

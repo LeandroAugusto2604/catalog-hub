@@ -8,6 +8,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import nodemailer from "nodemailer";
 import { z } from "zod";
 import { quoteShipping } from "@/lib/shipping.server";
+import { getPublicSupabase } from "@/lib/supabase-public.server";
 
 const bodySchema = z.object({
   customer_name: z.string().trim().min(2).max(200),
@@ -64,14 +65,7 @@ export const Route = createFileRoute("/api/create-payment")({
             );
           }
 
-          const SUPABASE_URL = process.env.SUPABASE_URL;
-          const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
-          if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
-            return Response.json({ error: "Banco não configurado" }, { status: 500 });
-          }
-          const { supabaseAdmin: supabase } = await import(
-            "@/integrations/supabase/client.server"
-          );
+          const supabase = getPublicSupabase();
 
           // Preços vêm SEMPRE do banco, nunca do navegador.
           const ids = [...new Set(data.items.map((i) => i.product_id))];
@@ -122,40 +116,6 @@ export const Route = createFileRoute("/api/create-payment")({
           const subtotal = lines.reduce((a, l) => a + l.unit_price * l.quantity, 0);
           const total = subtotal; // frete grátis para o cliente (custo pago pela loja)
           const order_id = crypto.randomUUID();
-
-          const { error: orderError } = await supabase.from("orders").insert({
-            id: order_id,
-            customer_name: data.customer_name,
-            whatsapp: data.whatsapp,
-            email: data.email,
-            notes: data.notes ?? null,
-            cep: data.cep,
-            rua: data.rua,
-            numero: data.numero,
-            complemento: data.complemento ?? null,
-            bairro: data.bairro,
-            cidade: data.cidade,
-            uf: data.uf.toUpperCase(),
-            total,
-            shipping_price: ship.price,
-            shipping_service: ship.name,
-            shipping_days: ship.days,
-            shipping_service_id: ship.id,
-            status: "pendente",
-          });
-          if (orderError) throw orderError;
-
-          const { error: itemsError } = await supabase.from("order_items").insert(
-            lines.map((l) => ({
-              order_id,
-              product_id: l.product_id,
-              product_name: l.product_name,
-              unit_price: l.unit_price,
-              quantity: l.quantity,
-            }))
-          );
-          if (itemsError) throw itemsError;
-
           const origin = new URL(request.url).origin;
           const siteUrl = (process.env.SITE_URL ?? origin).replace(/\/$/, "");
           const webhookToken = process.env.ORDER_WEBHOOK_TOKEN ?? "";
@@ -212,13 +172,42 @@ export const Route = createFileRoute("/api/create-payment")({
             );
           }
 
-          await supabase
-            .from("orders")
-            .update({ mp_preference_id: mpJson.id })
-            .eq("id", order_id)
-            .then(({ error }) => {
-              if (error) console.warn("[create-payment] preference_id não salvo:", error.message);
-            });
+          // Pedido salvo só depois que o Mercado Pago aceita a preferência,
+          // assim o id da preferência já entra junto (a chave pública não
+          // tem permissão para atualizar pedidos depois).
+          const { error: orderError } = await supabase.from("orders").insert({
+            id: order_id,
+            customer_name: data.customer_name,
+            whatsapp: data.whatsapp,
+            email: data.email,
+            notes: data.notes ?? null,
+            cep: data.cep,
+            rua: data.rua,
+            numero: data.numero,
+            complemento: data.complemento ?? null,
+            bairro: data.bairro,
+            cidade: data.cidade,
+            uf: data.uf.toUpperCase(),
+            total,
+            shipping_price: ship.price,
+            shipping_service: ship.name,
+            shipping_days: ship.days,
+            shipping_service_id: ship.id,
+            mp_preference_id: mpJson.id,
+            status: "pendente",
+          });
+          if (orderError) throw orderError;
+
+          const { error: itemsError } = await supabase.from("order_items").insert(
+            lines.map((l) => ({
+              order_id,
+              product_id: l.product_id,
+              product_name: l.product_name,
+              unit_price: l.unit_price,
+              quantity: l.quantity,
+            }))
+          );
+          if (itemsError) throw itemsError;
 
           // E-mails informando o pedido criado (aguardando pagamento)
           try {
