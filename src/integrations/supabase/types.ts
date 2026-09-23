@@ -175,6 +175,7 @@ export type Database = {
           image_urls: string[]
           name: string
           price: number
+          sort_order: number
           updated_at: string
           video_url: string | null
         }
@@ -188,6 +189,7 @@ export type Database = {
           image_urls?: string[]
           name: string
           price?: number
+          sort_order?: number
           updated_at?: string
           video_url?: string | null
         }
@@ -201,6 +203,7 @@ export type Database = {
           image_urls?: string[]
           name?: string
           price?: number
+          sort_order?: number
           updated_at?: string
           video_url?: string | null
         }

@@ -1,4 +1,4 @@
-// Server route portátil: envia e-mail de confirmação de orçamento via SMTP.
+// Server route portátil: envia e-mail de confirmação do carrinho via SMTP.
 // Funciona em qualquer ambiente Node (Lovable Cloud + sua VPS).
 //
 // Variáveis de ambiente necessárias (configure no .env da sua VPS):
@@ -8,7 +8,7 @@
 //   SMTP_USER       usuário SMTP (geralmente o e-mail)
 //   SMTP_PASS       senha SMTP ou app password
 //   SMTP_FROM       remetente, ex: "Catálogo <noreply@seudominio.com>"
-//   ADMIN_EMAIL     e-mail que receberá notificação de novos orçamentos
+//   ADMIN_EMAIL     e-mail que receberá notificação de novos carrinhos
 import { createFileRoute } from "@tanstack/react-router";
 import { createClient } from "@supabase/supabase-js";
 import nodemailer from "nodemailer";
@@ -47,7 +47,7 @@ export const Route = createFileRoute("/api/send-quote-email")({
 
           const SUPABASE_URL = process.env.SUPABASE_URL ?? process.env.VITE_SUPABASE_URL;
           // A chave de serviço é opcional: sem ela usamos a chave pública, que
-          // tem permissão apenas para CRIAR orçamentos (nunca para ler).
+          // tem permissão apenas para CRIAR carrinhos (nunca para ler).
           const SUPABASE_KEY =
             process.env.SUPABASE_SERVICE_ROLE_KEY ||
             process.env.SUPABASE_PUBLISHABLE_KEY ||
@@ -85,7 +85,7 @@ export const Route = createFileRoute("/api/send-quote-email")({
           if (insertItemsError) throw insertItemsError;
 
           // Usamos os dados já validados (não relemos o banco, pois a leitura
-          // de orçamentos é restrita ao administrador).
+          // de carrinhos é restrita ao administrador).
           const quote = parsed.data;
           const items = parsed.data.items;
 
@@ -139,18 +139,18 @@ export const Route = createFileRoute("/api/send-quote-email")({
 
           // E-mail para o cliente: confirmação
           const customerHtml = wrap(`
-            <h2 style="color:#ea580c;margin:0 0 16px">Recebemos seu orçamento</h2>
+            <h2 style="color:#ea580c;margin:0 0 16px">Recebemos seu carrinho</h2>
             <p>Olá <strong>${quote.customer_name}</strong>, obrigado pelo seu pedido! Em breve entraremos em contato pelo WhatsApp ${quote.whatsapp}.</p>
             <h3 style="margin:24px 0 0;font-size:15px">Itens solicitados</h3>
             ${itemsTable}
             ${notesBlock}
             ${contactBlock}
-            <p style="font-size:12px;color:#666;margin-top:24px">Este é um resumo do seu pedido de orçamento. Se algum dado estiver errado, responda a este e-mail.</p>
+            <p style="font-size:12px;color:#666;margin-top:24px">Este é um resumo do seu carrinho. Se algum dado estiver errado, responda a este e-mail.</p>
           `);
 
           // E-mail para o vendedor: dados de contato em destaque
           const adminHtml = wrap(`
-            <h2 style="color:#ea580c;margin:0 0 16px">Novo orçamento recebido</h2>
+            <h2 style="color:#ea580c;margin:0 0 16px">Novo carrinho recebido</h2>
             <table style="width:100%;border-collapse:collapse;background:#fff7ed;border-radius:8px">
               <tr><td style="padding:8px 12px;color:#666">Cliente</td><td style="padding:8px 12px;font-weight:bold">${quote.customer_name}</td></tr>
               <tr><td style="padding:8px 12px;color:#666">WhatsApp</td><td style="padding:8px 12px;font-weight:bold">${quote.whatsapp}</td></tr>
@@ -166,14 +166,14 @@ export const Route = createFileRoute("/api/send-quote-email")({
             transporter.sendMail({
               from: SMTP_FROM,
               to: quote.email,
-              subject: "Recebemos seu orçamento",
+              subject: "Recebemos seu carrinho",
               html: customerHtml,
               replyTo: ADMIN_EMAIL,
             }),
             transporter.sendMail({
               from: SMTP_FROM,
               to: ADMIN_EMAIL,
-              subject: `Novo orçamento: ${quote.customer_name} — ${fmt(Number(quote.total))}`,
+              subject: `Novo carrinho: ${quote.customer_name} — ${fmt(Number(quote.total))}`,
               html: adminHtml,
               replyTo: quote.email,
             }),

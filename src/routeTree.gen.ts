@@ -21,6 +21,7 @@ import { Route as ApiCreatePaymentRouteImport } from './routes/api.create-paymen
 import { Route as AdminQuotesRouteImport } from './routes/admin.quotes'
 import { Route as AdminOrdersRouteImport } from './routes/admin.orders'
 import { Route as ApiPublicMercadopagoWebhookRouteImport } from './routes/api/public/mercadopago-webhook'
+import { Route as ApiOrderStatusIdRouteImport } from './routes/api.order-status.$id'
 
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
@@ -83,6 +84,11 @@ const ApiPublicMercadopagoWebhookRoute =
     path: '/api/public/mercadopago-webhook',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiOrderStatusIdRoute = ApiOrderStatusIdRouteImport.update({
+  id: '/api/order-status/$id',
+  path: '/api/order-status/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -96,6 +102,7 @@ export interface FileRoutesByFullPath {
   '/pedido/$id': typeof PedidoIdRoute
   '/produto/$id': typeof ProdutoIdRoute
   '/admin/': typeof AdminIndexRoute
+  '/api/order-status/$id': typeof ApiOrderStatusIdRoute
   '/api/public/mercadopago-webhook': typeof ApiPublicMercadopagoWebhookRoute
 }
 export interface FileRoutesByTo {
@@ -109,6 +116,7 @@ export interface FileRoutesByTo {
   '/pedido/$id': typeof PedidoIdRoute
   '/produto/$id': typeof ProdutoIdRoute
   '/admin': typeof AdminIndexRoute
+  '/api/order-status/$id': typeof ApiOrderStatusIdRoute
   '/api/public/mercadopago-webhook': typeof ApiPublicMercadopagoWebhookRoute
 }
 export interface FileRoutesById {
@@ -124,6 +132,7 @@ export interface FileRoutesById {
   '/pedido/$id': typeof PedidoIdRoute
   '/produto/$id': typeof ProdutoIdRoute
   '/admin/': typeof AdminIndexRoute
+  '/api/order-status/$id': typeof ApiOrderStatusIdRoute
   '/api/public/mercadopago-webhook': typeof ApiPublicMercadopagoWebhookRoute
 }
 export interface FileRouteTypes {
@@ -140,6 +149,7 @@ export interface FileRouteTypes {
     | '/pedido/$id'
     | '/produto/$id'
     | '/admin/'
+    | '/api/order-status/$id'
     | '/api/public/mercadopago-webhook'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -153,6 +163,7 @@ export interface FileRouteTypes {
     | '/pedido/$id'
     | '/produto/$id'
     | '/admin'
+    | '/api/order-status/$id'
     | '/api/public/mercadopago-webhook'
   id:
     | '__root__'
@@ -167,6 +178,7 @@ export interface FileRouteTypes {
     | '/pedido/$id'
     | '/produto/$id'
     | '/admin/'
+    | '/api/order-status/$id'
     | '/api/public/mercadopago-webhook'
   fileRoutesById: FileRoutesById
 }
@@ -179,6 +191,7 @@ export interface RootRouteChildren {
   ApiSendQuoteEmailRoute: typeof ApiSendQuoteEmailRoute
   PedidoIdRoute: typeof PedidoIdRoute
   ProdutoIdRoute: typeof ProdutoIdRoute
+  ApiOrderStatusIdRoute: typeof ApiOrderStatusIdRoute
   ApiPublicMercadopagoWebhookRoute: typeof ApiPublicMercadopagoWebhookRoute
 }
 
@@ -268,6 +281,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicMercadopagoWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/order-status/$id': {
+      id: '/api/order-status/$id'
+      path: '/api/order-status/$id'
+      fullPath: '/api/order-status/$id'
+      preLoaderRoute: typeof ApiOrderStatusIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -294,6 +314,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiSendQuoteEmailRoute: ApiSendQuoteEmailRoute,
   PedidoIdRoute: PedidoIdRoute,
   ProdutoIdRoute: ProdutoIdRoute,
+  ApiOrderStatusIdRoute: ApiOrderStatusIdRoute,
   ApiPublicMercadopagoWebhookRoute: ApiPublicMercadopagoWebhookRoute,
 }
 export const routeTree = rootRouteImport

@@ -1,6 +1,5 @@
 import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, Clock, XCircle, Loader2, ArrowLeft } from "lucide-react";
 import { formatBRL } from "@/lib/cart";
@@ -57,7 +56,6 @@ const LABELS: Record<string, { title: string; text: string; tone: string }> = {
     text: "O pagamento foi cancelado. Se quiser, refaça o pedido no catálogo.",
     tone: "bad",
   },
-  devolviido: { title: "Pagamento devolvido", text: "O valor foi devolvido.", tone: "bad" },
   devolvido: { title: "Pagamento devolvido", text: "O valor foi devolvido.", tone: "bad" },
 };
 
@@ -69,11 +67,18 @@ function OrderStatusPage() {
   useEffect(() => {
     let active = true;
     const load = async () => {
-      const { data } = await supabase.rpc("get_order_status", { _order_id: id });
       if (!active) return;
-      const row = Array.isArray(data) ? (data[0] as OrderStatus | undefined) : null;
-      setOrder(row ?? null);
-      setLoading(false);
+      try {
+        const response = await fetch(`/api/order-status/${encodeURIComponent(id)}`);
+        const data = await response.json().catch(() => null);
+        if (!active) return;
+        setOrder(response.ok ? ((data?.order as OrderStatus | null) ?? null) : null);
+      } catch {
+        if (!active) return;
+        setOrder(null);
+      } finally {
+        if (active) setLoading(false);
+      }
     };
     load();
     const timer = setInterval(load, 8000);

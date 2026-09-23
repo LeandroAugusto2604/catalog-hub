@@ -13,14 +13,16 @@ import { Toaster } from "sonner";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Catálogo Digital — Solicite seu orçamento" },
+      { title: "Catálogo Digital — Monte seu carrinho" },
       {
         name: "description",
         content:
-          "Catálogo de produtos com solicitação de orçamento via WhatsApp e e-mail. Selecione, envie e receba.",
+          "Catálogo de produtos com carrinho, compra online, WhatsApp e e-mail. Selecione, envie e receba.",
       },
       { property: "og:title", content: "Catálogo Digital" },
-      { property: "og:description", content: "Vitrine de produtos e orçamento online." },
+      { property: "og:description", content: "Vitrine de produtos com carrinho online." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: Index,
@@ -33,6 +35,7 @@ interface Category {
 }
 interface Product extends ProductCardData {
   category_id: string | null;
+  sort_order: number;
 }
 
 function Index() {
@@ -49,8 +52,9 @@ function Index() {
         supabase.from("categories").select("*").order("name"),
         supabase
           .from("products")
-          .select("id,name,description,price,image_url,image_urls,video_url,category_id")
+          .select("id,name,description,price,image_url,image_urls,video_url,category_id,sort_order")
           .eq("active", true)
+          .order("sort_order", { ascending: true })
           .order("created_at", { ascending: false }),
       ]);
       setCategories(cats.data ?? []);
@@ -85,12 +89,12 @@ function Index() {
           <div className="max-w-2xl">
             <div className="inline-flex items-center gap-2 text-xs text-primary mb-4 px-3 py-1 rounded-full border border-primary/30 bg-primary/5">
               <Sparkles className="h-3 w-3" />
-              Catálogo digital · Orçamento em segundos
+              Catálogo digital · Carrinho em segundos
             </div>
             <h1 className="text-4xl sm:text-6xl font-bold tracking-tight leading-[1.05]">
               Encontre, selecione e<br />
               <span className="bg-clip-text text-transparent bg-[image:var(--gradient-primary)]">
-                receba seu orçamento.
+                finalize sua compra.
               </span>
             </h1>
             <p className="mt-5 text-muted-foreground text-base sm:text-lg max-w-lg">

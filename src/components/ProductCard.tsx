@@ -127,7 +127,7 @@ export function ProductCard({ product }: { product: ProductCardData }) {
                 price: Number(product.price),
                 image_url: cover ?? null,
               });
-              toast.success("Adicionado ao orçamento");
+              toast.success("Adicionado ao carrinho");
             }}
           >
             <Plus className="h-4 w-4" />

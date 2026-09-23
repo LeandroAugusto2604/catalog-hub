@@ -91,7 +91,7 @@ export function CartSheet({ open, onOpenChange }: Props) {
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (items.length === 0) {
-      toast.error("Adicione produtos ao orçamento");
+      toast.error("Adicione produtos ao carrinho");
       return;
     }
     const parsed = formSchema.safeParse(form);
@@ -121,16 +121,16 @@ export function CartSheet({ open, onOpenChange }: Props) {
       });
       if (!response.ok) {
         const data = await response.json().catch(() => null);
-        throw new Error(data?.error ?? "Falha ao enviar orçamento");
+        throw new Error(data?.error ?? "Falha ao enviar carrinho");
       }
 
-      toast.success("Orçamento enviado! Entraremos em contato em breve.");
+      toast.success("Carrinho enviado! Entraremos em contato em breve.");
       clear();
       setForm({ customer_name: "", whatsapp: "", email: "", notes: "", cpf: "" });
       onOpenChange(false);
     } catch (err: any) {
       console.error(err);
-      toast.error(err.message ?? "Falha ao enviar orçamento");
+      toast.error(err.message ?? "Falha ao enviar carrinho");
     } finally {
       setSubmitting(false);
     }
@@ -280,7 +280,7 @@ export function CartSheet({ open, onOpenChange }: Props) {
                     : "text-muted-foreground hover:text-foreground"
                 }`}
               >
-                <FileText className="h-3.5 w-3.5" /> Pedir orçamento
+                <FileText className="h-3.5 w-3.5" /> Enviar carrinho
               </button>
             </div>
 
@@ -444,17 +444,17 @@ export function CartSheet({ open, onOpenChange }: Props) {
               >
                 {payingNow ? (
                   <>
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" /> Abrindo pagamento...
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" /> Finalizando...
                   </>
                 ) : (
                   <>
-                    <CreditCard className="h-4 w-4 mr-2" /> Pagar com Pix ou cartão
+                    <CreditCard className="h-4 w-4 mr-2" /> Finalizar Compra
                   </>
                 )}
               </Button>
             ) : (
               <Button type="submit" disabled={submitting} className="w-full btn-glow border-0">
-                {submitting ? "Enviando..." : "Enviar Orçamento por E-mail"}
+                {submitting ? "Enviando..." : "Enviar Carrinho por E-mail"}
               </Button>
             )}
 
@@ -467,7 +467,7 @@ export function CartSheet({ open, onOpenChange }: Props) {
                 const lines = items.map(
                   (i) => `• ${i.name} — ${i.quantity}x ${formatBRL(i.price)} = ${formatBRL(i.price * i.quantity)}`
                 );
-                const header = `Olá! Gostaria de solicitar um orçamento:`;
+                const header = `Olá! Gostaria de enviar meu carrinho:`;
                 const customer = parsed.success
                   ? `\n\n*Cliente:* ${parsed.data.customer_name}\n*WhatsApp:* ${parsed.data.whatsapp}\n*E-mail:* ${parsed.data.email}${parsed.data.notes ? `\n*Obs:* ${parsed.data.notes}` : ""}`
                   : "";

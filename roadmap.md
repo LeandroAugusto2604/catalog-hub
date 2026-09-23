@@ -1,0 +1,5 @@
+- [x] Ordenar catálogo público pela ordem definida no admin.
+- [x] Trocar texto de pagamento para Finalizando.
+- [x] Proteger criação/status/webhook de pedidos no servidor.
+- [x] Alinhar schema de deploy com as permissões atuais.
+- [x] Verificar tipos, build e avisos de segurança.

@@ -12,8 +12,13 @@ import { ArrowLeft } from "lucide-react";
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
-      { title: "Acesso Admin — Catálogo" },
-      { name: "description", content: "Login do painel administrativo." },
+      { title: "Acesso Admin — Tudo Top" },
+      { name: "description", content: "Entre no painel privado do catálogo Tudo Top." },
+      { property: "og:title", content: "Acesso Admin — Tudo Top" },
+      { property: "og:description", content: "Entre no painel privado do catálogo Tudo Top." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+      { name: "robots", content: "noindex" },
     ],
   }),
   component: Auth,

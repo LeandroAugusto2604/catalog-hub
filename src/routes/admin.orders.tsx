@@ -14,6 +14,17 @@ import { toast } from "sonner";
 import { formatBRL } from "@/lib/cart";
 
 export const Route = createFileRoute("/admin/orders")({
+  head: () => ({
+    meta: [
+      { title: "Pedidos pagos — Admin Tudo Top" },
+      { name: "description", content: "Acompanhe compras pagas, pendentes e entregas do catálogo Tudo Top." },
+      { property: "og:title", content: "Pedidos pagos — Admin Tudo Top" },
+      { property: "og:description", content: "Acompanhe compras pagas, pendentes e entregas do catálogo Tudo Top." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+      { name: "robots", content: "noindex" },
+    ],
+  }),
   component: OrdersAdmin,
 });
 

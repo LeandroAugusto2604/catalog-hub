@@ -31,7 +31,7 @@ export function SiteHeader({ onOpenCart }: Props) {
             className="relative border-primary/30 hover:border-primary"
           >
             <ShoppingCart className="h-4 w-4 sm:mr-2" />
-            <span className="hidden sm:inline">Orçamento</span>
+            <span className="hidden sm:inline">Carrinho</span>
             {count > 0 && (
               <Badge className="absolute -top-2 -right-2 h-5 min-w-5 px-1 bg-primary text-primary-foreground border-0">
                 {count}

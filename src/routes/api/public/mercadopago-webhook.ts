@@ -2,7 +2,6 @@
 // Configure no painel do Mercado Pago (Notificações / Webhooks):
 //   https://SEU-DOMINIO/api/public/mercadopago-webhook?token=ORDER_WEBHOOK_TOKEN
 import { createFileRoute } from "@tanstack/react-router";
-import { createClient } from "@supabase/supabase-js";
 import nodemailer from "nodemailer";
 
 const fmt = (n: number) =>
@@ -70,15 +69,12 @@ export const Route = createFileRoute("/api/public/mercadopago-webhook")({
 
           const SUPABASE_URL =
             process.env.SUPABASE_URL ?? process.env.VITE_SUPABASE_URL;
-          const SUPABASE_KEY =
-            process.env.SUPABASE_SERVICE_ROLE_KEY ||
-            process.env.SUPABASE_PUBLISHABLE_KEY ||
-            process.env.VITE_SUPABASE_PUBLISHABLE_KEY;
-          if (!SUPABASE_URL || !SUPABASE_KEY) return new Response("ok");
+          const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+          if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) return new Response("ok");
 
-          const supabase = createClient(SUPABASE_URL, SUPABASE_KEY, {
-            auth: { persistSession: false, autoRefreshToken: false },
-          });
+          const { supabaseAdmin: supabase } = await import(
+            "@/integrations/supabase/client.server"
+          );
 
           const { error } = await supabase.rpc("confirm_order_payment", {
             _order_id: orderId,
