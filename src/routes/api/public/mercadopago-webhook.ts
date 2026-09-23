@@ -98,7 +98,7 @@ export const Route = createFileRoute("/api/public/mercadopago-webhook")({
                   const sfId = await createSuperFreteOrder(
                     { ...shipData.order, superfrete_id: null },
                     shipData.items ?? [],
-                    String(payment?.payer?.identification?.number ?? "")
+                    String(shipData.order.customer_document || (payment?.payer?.identification?.type === "CPF" ? payment.payer.identification.number : "") || "")
                   );
                   if (!sfId) throw new Error("sem id");
                   await supabase.rpc("set_superfrete_id", {

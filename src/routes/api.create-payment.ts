@@ -12,7 +12,7 @@ import { businessDaysDate } from "@/lib/delivery";
 import { getPublicSupabase } from "@/lib/supabase-public.server";
 
 const bodySchema = z.object({
-  customer_name: z.string().trim().min(2).max(200),
+  customer_name: z.string().trim().min(2).max(200).refine((v) => v.split(/\s+/).filter(Boolean).length >= 2, "Informe nome e sobrenome"),
   whatsapp: z.string().trim().min(5).max(40),
   email: z.string().trim().email().max(320),
   notes: z.string().max(1000).nullable().optional(),
@@ -179,6 +179,7 @@ export const Route = createFileRoute("/api/create-payment")({
           const { error: orderError } = await supabase.from("orders").insert({
             id: order_id,
             customer_name: data.customer_name,
+            customer_document: data.cpf ?? null,
             whatsapp: data.whatsapp,
             email: data.email,
             notes: data.notes ?? null,

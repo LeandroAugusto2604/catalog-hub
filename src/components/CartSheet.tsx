@@ -22,7 +22,7 @@ import { z } from "zod";
 const STORE_WHATSAPP = "5511937460073";
 
 const formSchema = z.object({
-  customer_name: z.string().trim().min(2, "Nome muito curto").max(200),
+  customer_name: z.string().trim().min(2, "Nome muito curto").max(200).refine((v) => v.split(/\s+/).filter(Boolean).length >= 2, "Informe nome e sobrenome"),
   whatsapp: z.string().trim().min(8, "WhatsApp inválido").max(40),
   email: z.string().trim().email("E-mail inválido").max(320),
   notes: z.string().max(1000).optional(),
@@ -324,7 +324,7 @@ export function CartSheet({ open, onOpenChange }: Props) {
             )}
 
             <div className="space-y-2">
-              <Label htmlFor="cn">Nome *</Label>
+              <Label htmlFor="cn">Nome completo *</Label>
               <Input
                 id="cn"
                 value={form.customer_name}
