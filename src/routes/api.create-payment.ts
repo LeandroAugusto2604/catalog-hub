@@ -161,8 +161,12 @@ export const Route = createFileRoute("/api/create-payment")({
               currency_id: "BRL",
             })),
             payer: {
-              name: data.customer_name,
+              name: data.customer_name.split(" ")[0],
+              surname: data.customer_name.split(" ").slice(1).join(" ") || data.customer_name,
               email: data.email,
+              ...(data.cpf
+                ? { identification: { type: "CPF", number: data.cpf } }
+                : {}),
               address: {
                 zip_code: data.cep.replace(/\D/g, ""),
                 street_name: data.rua,
