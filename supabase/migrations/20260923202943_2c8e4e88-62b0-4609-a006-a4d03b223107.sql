@@ -1,0 +1,1 @@
+ALTER TABLE public.orders ADD COLUMN IF NOT EXISTS shipping_service_id text, ADD COLUMN IF NOT EXISTS superfrete_id text;

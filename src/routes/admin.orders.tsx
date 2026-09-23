@@ -48,6 +48,7 @@ interface Order {
   shipping_price: number | null;
   shipping_service: string | null;
   shipping_days: number | null;
+  superfrete_id: string | null;
   created_at: string;
 }
 interface Item {
@@ -229,6 +230,11 @@ function OrdersAdmin() {
                         </span>
                         <span>{formatBRL(Number(o.shipping_price ?? 0))}</span>
                       </div>
+                    )}
+                    {o.shipping_service && (
+                      <p className="text-xs text-muted-foreground">
+                        SuperFrete: {o.superfrete_id ? `envio criado (nº ${o.superfrete_id})` : "será criado quando o pagamento for aprovado"}
+                      </p>
                     )}
                     <div className="flex justify-between font-semibold pt-2 mt-2 border-t border-border">
                       <span>Total pago pelo cliente</span>
