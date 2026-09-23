@@ -111,9 +111,6 @@ function Auth() {
           {mode === "forgot" ? "Voltar ao login" : "Esqueci minha senha"}
         </button>
 
-        <p className="mt-6 text-xs text-muted-foreground text-center">
-          Para se tornar admin, crie a conta e peça ao proprietário do sistema para promover seu usuário.
-        </p>
       </Card>
     </div>
   );
