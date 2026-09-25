@@ -1,4 +1,4 @@
-# Publicar em VPS própria — tudotop.dev-prod.cloud
+# Publicar em VPS própria — www.tudotoplartech.shop
 
 Guia completo, do zero até o site no ar com HTTPS.
 
@@ -90,7 +90,7 @@ sudo systemctl reload nginx
 ## 6. Ativar o HTTPS
 
 ```bash
-sudo certbot --nginx -d tudotop.dev-prod.cloud -d www.tudotop.dev-prod.cloud
+sudo certbot --nginx -d www.tudotoplartech.shop -d www.www.tudotoplartech.shop
 ```
 
 O certificado renova automaticamente.
@@ -101,10 +101,10 @@ O certificado renova automaticamente.
 
 | Página | URL |
 |--------|-----|
-| Catálogo (clientes) | https://tudotop.dev-prod.cloud |
-| Entrar / criar senha | https://tudotop.dev-prod.cloud/auth |
-| Painel de produtos | https://tudotop.dev-prod.cloud/admin |
-| Pedidos / orçamentos | https://tudotop.dev-prod.cloud/admin/quotes |
+| Catálogo (clientes) | https://www.tudotoplartech.shop |
+| Entrar / criar senha | https://www.tudotoplartech.shop/auth |
+| Painel de produtos | https://www.tudotoplartech.shop/admin |
+| Pedidos / orçamentos | https://www.tudotoplartech.shop/admin/quotes |
 
 ---
 
@@ -128,4 +128,4 @@ pm2 restart tudotop
 | Site abre mas sem produtos | Valores `SUPABASE_*` e `VITE_SUPABASE_*` no `.env`; refaça o build depois de alterar |
 | Orçamento não envia e-mail | Dados `SMTP_*` no `.env`; veja `pm2 logs tudotop` |
 | Foto grande não sobe | `client_max_body_size` no arquivo do Nginx |
-| Link de redefinição de senha aponta para outro domínio | Configure a URL do site no painel do Lovable Cloud como `https://tudotop.dev-prod.cloud` |
+| Link de redefinição de senha aponta para outro domínio | Configure a URL do site no painel do Lovable Cloud como `https://www.tudotoplartech.shop` |
