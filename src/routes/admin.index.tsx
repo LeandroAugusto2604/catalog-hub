@@ -357,7 +357,7 @@ function ProductsAdmin() {
               </div>
               <div className="grid grid-cols-4 gap-2">
                 {([
-                  ["weight_kg", "Peso (kg)"],
+                  ["weight_kg", "Peso em kg (ex.: 0.3 = 300 g)"],
                   ["height_cm", "Altura (cm)"],
                   ["width_cm", "Largura (cm)"],
                   ["length_cm", "Compr. (cm)"],
