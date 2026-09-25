@@ -33,7 +33,7 @@ export async function quoteShipping(
       insurance += Number(p.price) * i.quantity;
       return {
         quantity: i.quantity,
-        weight: Number(p.weight_kg) || 0.3,
+        weight: (Number(p.weight_kg) > 30 ? Number(p.weight_kg) / 1000 : Number(p.weight_kg)) || 0.3,
         height: Math.max(2, Number(p.height_cm) || 2),
         width: Math.max(11, Number(p.width_cm) || 11),
         length: Math.max(16, Number(p.length_cm) || 16),
@@ -112,7 +112,7 @@ export async function createSuperFreteOrder(
   for (const it of items ?? []) {
     const p: any = prods?.find((x: any) => x.id === it.product_id) ?? {};
     const q = Number(it.quantity);
-    weight += (Number(p.weight_kg) || 0.3) * q;
+    weight += ((Number(p.weight_kg) > 30 ? Number(p.weight_kg) / 1000 : Number(p.weight_kg)) || 0.3) * q;
     height += Math.max(2, Number(p.height_cm) || 2) * q;
     width = Math.max(width, Number(p.width_cm) || 11);
     length = Math.max(length, Number(p.length_cm) || 16);
