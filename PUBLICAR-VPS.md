@@ -8,12 +8,12 @@
 
 ## 1. Apontar o domínio
 
-No painel onde o domínio `dev-prod.cloud` está registrado, crie:
+No painel onde o domínio `tudotoplartech.shop` está registrado (Hostinger), crie:
 
-| Tipo | Nome     | Valor         |
-| ---- | -------- | ------------- |
-| A    | tudotop  | 76.13.80.61   |
-| A    | www.tudotop | 76.13.80.61 |
+| Tipo | Nome | Valor        |
+| ---- | ---- | ------------ |
+| A    | @    | 76.13.80.61  |
+| A    | www  | 76.13.80.61  |
 
 Espere alguns minutos até o domínio responder.
 
