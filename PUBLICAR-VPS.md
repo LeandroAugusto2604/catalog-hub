@@ -69,7 +69,7 @@ bash deploy/atualizar.sh
 Depois ative o HTTPS:
 
 ```bash
-certbot --nginx -d www.tudotoplartech.shop -d www.www.tudotoplartech.shop
+certbot --nginx -d tudotoplartech.shop -d www.tudotoplartech.shop
 ```
 
 Abra **https://www.tudotoplartech.shop** — o site já está no ar.

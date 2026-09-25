@@ -90,7 +90,7 @@ sudo systemctl reload nginx
 ## 6. Ativar o HTTPS
 
 ```bash
-sudo certbot --nginx -d www.tudotoplartech.shop -d www.www.tudotoplartech.shop
+sudo certbot --nginx -d tudotoplartech.shop -d www.tudotoplartech.shop
 ```
 
 O certificado renova automaticamente.
