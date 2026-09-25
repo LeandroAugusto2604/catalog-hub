@@ -39,8 +39,9 @@ export function SiteFooter() {
           </div>
         </div>
 
-        <div className="mt-8 pt-6 border-t border-border text-center text-xs text-muted-foreground">
-          © {new Date().getFullYear()} Tudo Top · Compre com segurança
+        <div className="mt-8 pt-6 border-t border-border text-center text-xs text-muted-foreground space-y-1">
+          <p>© {new Date().getFullYear()} Tudo Top · Compre com segurança</p>
+          <p>CNPJ: 65.713.731/0001-20</p>
         </div>
       </div>
     </footer>
