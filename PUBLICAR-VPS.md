@@ -1,6 +1,6 @@
 # Publicar o site na sua VPS (via GitHub)
 
-- Site: **https://tudotop.dev-prod.cloud**
+- Site: **https://www.tudotoplartech.shop**
 - VPS: **76.13.80.61**
 - Painel do site: `/auth` (entrar) e `/admin` (produtos e pedidos)
 
@@ -8,12 +8,12 @@
 
 ## 1. Apontar o domínio
 
-No painel onde o domínio `dev-prod.cloud` está registrado, crie:
+No painel onde o domínio `tudotoplartech.shop` está registrado (Hostinger), crie:
 
-| Tipo | Nome     | Valor         |
-| ---- | -------- | ------------- |
-| A    | tudotop  | 76.13.80.61   |
-| A    | www.tudotop | 76.13.80.61 |
+| Tipo | Nome | Valor        |
+| ---- | ---- | ------------ |
+| A    | @    | 76.13.80.61  |
+| A    | www  | 76.13.80.61  |
 
 Espere alguns minutos até o domínio responder.
 
@@ -69,14 +69,14 @@ bash deploy/atualizar.sh
 Depois ative o HTTPS:
 
 ```bash
-certbot --nginx -d tudotop.dev-prod.cloud -d www.tudotop.dev-prod.cloud
+certbot --nginx -d tudotoplartech.shop -d www.tudotoplartech.shop
 ```
 
-Abra **https://tudotop.dev-prod.cloud** — o site já está no ar.
+Abra **https://www.tudotoplartech.shop** — o site já está no ar.
 
 ## 6. Virar administrador
 
-1. Acesse `https://tudotop.dev-prod.cloud/auth` e cadastre-se com `leandro_cjc@hotmail.com`.
+1. Acesse `https://www.tudotoplartech.shop/auth` e cadastre-se com `leandro_cjc@hotmail.com`.
 2. No SQL Editor do Supabase, rode:
 
 ```sql

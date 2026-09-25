@@ -18,7 +18,7 @@ VITE_SUPABASE_PROJECT_ID="tgxvivfxstueitelvnal"
 # ---- Servidor ----
 PORT="3000"
 NODE_ENV="production"
-SITE_URL="https://tudotop.dev-prod.cloud"
+SITE_URL="https://www.tudotoplartech.shop"
 
 # ---- E-mail dos orçamentos (Hostinger) ----
 # Já preenchido. Depois de copiar, rode: bash deploy/atualizar.sh

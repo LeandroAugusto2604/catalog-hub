@@ -42,8 +42,8 @@ Em **Authentication → Sign In / Providers**:
 
 Em **Authentication → URL Configuration**:
 
-- **Site URL**: `https://tudotop.dev-prod.cloud`
-- **Redirect URLs**: adicione `https://tudotop.dev-prod.cloud/**`
+- **Site URL**: `https://www.tudotoplartech.shop`
+- **Redirect URLs**: adicione `https://www.tudotoplartech.shop/**`
 
 Sem isso o link de redefinição de senha aponta para o endereço errado.
 
@@ -67,7 +67,7 @@ Coloque tudo no `.env` da VPS, conforme o `.env.example`.
 ## 6. Criar seu acesso de administrador
 
 1. Rode o site (`bun run build:vps` + `pm2 restart tudotop`).
-2. Acesse `https://tudotop.dev-prod.cloud/auth` e crie sua conta.
+2. Acesse `https://www.tudotoplartech.shop/auth` e crie sua conta.
 3. No **SQL Editor** do Supabase, rode (troque o e-mail):
 
 ```sql

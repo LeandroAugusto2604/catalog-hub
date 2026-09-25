@@ -3,7 +3,7 @@
 #   bash deploy/setup-vps.sh
 set -e
 
-DOMINIO="tudotop.dev-prod.cloud"
+DOMINIO="tudotoplartech.shop"
 
 echo "==> Atualizando o sistema"
 apt update && apt upgrade -y

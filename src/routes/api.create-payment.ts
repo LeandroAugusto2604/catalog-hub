@@ -3,7 +3,7 @@
 // Variáveis de ambiente necessárias:
 //   MP_ACCESS_TOKEN        Access Token da sua conta Mercado Pago
 //   ORDER_WEBHOOK_TOKEN    senha interna usada pelo webhook (já preenchida no .env)
-//   SITE_URL               ex: https://tudotop.dev-prod.cloud
+//   SITE_URL               ex: https://www.tudotoplartech.shop
 import { createFileRoute } from "@tanstack/react-router";
 import nodemailer from "nodemailer";
 import { z } from "zod";
@@ -256,7 +256,7 @@ export const Route = createFileRoute("/api/create-payment")({
                     <p style="font-size:14px;color:#444">${address}</p>
                     <p style="font-size:14px">Frete: <strong style="color:#16a34a">grátis</strong> (${ship.name})<br>Previsão de entrega: <strong>${businessDaysDate(ship.days)}</strong> <span style="color:#666;font-size:12px">(após a confirmação do pagamento)</span></p>
                     ${contactBlock}
-                    <p style="font-size:12px;color:#666;margin-top:24px">Pedido nº <strong>${orderNumber}</strong> — consulte o status em ${process.env.SITE_URL ?? "https://tudotop.dev-prod.cloud"}/meu-pedido</p>
+                    <p style="font-size:12px;color:#666;margin-top:24px">Pedido nº <strong>${orderNumber}</strong> — consulte o status em ${process.env.SITE_URL ?? "https://www.tudotoplartech.shop"}/meu-pedido</p>
                   `),
                 }),
                 transporter.sendMail({
@@ -276,7 +276,7 @@ export const Route = createFileRoute("/api/create-payment")({
                     <p style="font-size:14px;color:#444">${address}</p>
                     <p style="font-size:14px">Frete ${ship.name} — previsão: <strong>${businessDaysDate(ship.days)}</strong></p>
                     ${data.notes ? `<p style="background:#f5f5f5;padding:12px;border-radius:8px"><strong>Observações:</strong><br>${data.notes}</p>` : ""}
-                    <p style="font-size:12px;color:#666;margin-top:24px">Pedido nº <strong>${orderNumber}</strong> — consulte o status em ${process.env.SITE_URL ?? "https://tudotop.dev-prod.cloud"}/meu-pedido</p>
+                    <p style="font-size:12px;color:#666;margin-top:24px">Pedido nº <strong>${orderNumber}</strong> — consulte o status em ${process.env.SITE_URL ?? "https://www.tudotoplartech.shop"}/meu-pedido</p>
                   `),
                 }),
               ]);
