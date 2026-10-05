@@ -366,9 +366,6 @@ export function CartSheet({ open, onOpenChange }: Props) {
                   onChange={(e) => setForm({ ...form, cpf: e.target.value })}
                   required
                 />
-                <p className="text-xs text-muted-foreground">
-                  Obrigatório pelo Pix. Use um e-mail diferente do da sua conta Mercado Pago.
-                </p>
               </div>
             )}
 
