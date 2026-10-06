@@ -133,7 +133,7 @@ export function ProductCard({ product }: { product: ProductCardData }) {
             </span>
             {normalizeTiers(product.price_tiers).length > 0 && (
               <span className="text-[11px] text-muted-foreground">
-                Desconto levando mais unidades
+                Desconto levando mais de 1 ou acima de 5 un.
               </span>
             )}
           </span>
