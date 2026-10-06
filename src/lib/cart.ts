@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { unitPriceFor, type PriceTier } from "./pricing";
 
 export interface CartItem {
   id: string;
@@ -7,7 +8,10 @@ export interface CartItem {
   price: number;
   image_url: string | null;
   quantity: number;
+  price_tiers?: PriceTier[];
 }
+
+export const itemUnitPrice = (i: CartItem) => unitPriceFor(i.price, i.price_tiers, i.quantity);
 
 interface CartState {
   items: CartItem[];
@@ -45,7 +49,7 @@ export const useCart = create<CartState>()(
         })),
       clear: () => set({ items: [] }),
       count: () => get().items.reduce((acc, i) => acc + i.quantity, 0),
-      total: () => get().items.reduce((acc, i) => acc + i.price * i.quantity, 0),
+      total: () => get().items.reduce((acc, i) => acc + itemUnitPrice(i) * i.quantity, 0),
     }),
     { name: "catalog-cart" }
   )
