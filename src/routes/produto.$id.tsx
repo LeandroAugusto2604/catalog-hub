@@ -61,7 +61,7 @@ function ProductPage() {
       setLoading(true);
       const { data } = await supabase
         .from("products")
-        .select("id,name,description,price,image_url,image_urls,video_url")
+        .select("id,name,description,price,price_tiers,image_url,image_urls,video_url")
         .eq("id", id)
         .eq("active", true)
         .maybeSingle();

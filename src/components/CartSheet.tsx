@@ -14,7 +14,7 @@ import {
   FileText,
   Loader2,
 } from "lucide-react";
-import { useCart, formatBRL } from "@/lib/cart";
+import { useCart, formatBRL, itemUnitPrice } from "@/lib/cart";
 import { toast } from "sonner";
 import { ShippingCalculator, type ShippingOption } from "@/components/ShippingCalculator";
 import { z } from "zod";

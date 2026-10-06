@@ -68,6 +68,7 @@ interface Product {
   height_cm: number;
   width_cm: number;
   length_cm: number;
+  price_tiers: unknown;
 }
 interface Category {
   id: string;
@@ -87,6 +88,7 @@ interface EditingState {
   height_cm: string;
   width_cm: string;
   length_cm: string;
+  price_tiers: { min_qty: string; price: string }[];
 }
 
 const empty: EditingState = {
@@ -102,6 +104,7 @@ const empty: EditingState = {
   height_cm: "17",
   width_cm: "9",
   length_cm: "7",
+  price_tiers: [],
 };
 
 function ProductsAdmin() {
@@ -156,6 +159,7 @@ function ProductsAdmin() {
       height_cm: String(p.height_cm ?? 17),
       width_cm: String(p.width_cm ?? 9),
       length_cm: String(p.length_cm ?? 7),
+      price_tiers: normalizeTiers(p.price_tiers).map((t) => ({ min_qty: String(t.min_qty), price: String(t.price) })),
     });
     setOpen(true);
   };
@@ -245,6 +249,7 @@ function ProductsAdmin() {
         height_cm: Number(editing.height_cm) || 17,
         width_cm: Number(editing.width_cm) || 9,
         length_cm: Number(editing.length_cm) || 7,
+        price_tiers: normalizeTiers(editing.price_tiers) as any,
       };
       if (editing.id) {
         const { error } = await supabase.from("products").update(payload).eq("id", editing.id);
@@ -401,6 +406,59 @@ function ProductsAdmin() {
                     </SelectContent>
                   </Select>
                 </div>
+              </div>
+              <div className="space-y-2 rounded-lg border border-border p-3">
+                <Label>Desconto por quantidade (opcional)</Label>
+                <p className="text-xs text-muted-foreground">
+                  Ex.: a partir de 2 un. = R$ 90; a partir de 6 un. = R$ 80; a partir de 11 un. = R$ 70.
+                </p>
+                {editing.price_tiers.map((t, idx) => (
+                  <div key={idx} className="flex items-center gap-2">
+                    <span className="text-xs text-muted-foreground shrink-0">A partir de</span>
+                    <Input
+                      type="number"
+                      min={2}
+                      className="w-20"
+                      value={t.min_qty}
+                      onChange={(e) => {
+                        const tiers = [...editing.price_tiers];
+                        tiers[idx] = { ...t, min_qty: e.target.value };
+                        setEditing({ ...editing, price_tiers: tiers });
+                      }}
+                    />
+                    <span className="text-xs text-muted-foreground shrink-0">un. → R$</span>
+                    <Input
+                      type="number"
+                      step="0.01"
+                      value={t.price}
+                      onChange={(e) => {
+                        const tiers = [...editing.price_tiers];
+                        tiers[idx] = { ...t, price: e.target.value };
+                        setEditing({ ...editing, price_tiers: tiers });
+                      }}
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() =>
+                        setEditing({ ...editing, price_tiers: editing.price_tiers.filter((_, i) => i !== idx) })
+                      }
+                    >
+                      ✕
+                    </Button>
+                  </div>
+                ))}
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() =>
+                    setEditing({ ...editing, price_tiers: [...editing.price_tiers, { min_qty: "", price: "" }] })
+                  }
+                >
+                  + Adicionar faixa
+                </Button>
               </div>
               <div className="space-y-1.5">
                 <Label>Imagens (até {MAX_IMAGES})</Label>
