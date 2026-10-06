@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { normalizeTiers } from "@/lib/pricing";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ArrowLeft, Play, Plus, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
