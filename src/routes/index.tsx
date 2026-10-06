@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { Search, Sparkles } from "lucide-react";
+import logoUrl from "@/assets/logo-tudotop.png";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -14,13 +15,13 @@ import { Toaster } from "sonner";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Catálogo Digital — Monte seu carrinho" },
+      { title: "TudoTop&LarTech — Monte seu carrinho" },
       {
         name: "description",
         content:
-          "Catálogo de produtos com carrinho, compra online, WhatsApp e e-mail. Selecione, envie e receba.",
+          "Loja TudoTop&LarTech com carrinho, compra online pelo Pix ou cartão, WhatsApp e e-mail. Selecione, finalize e receba.",
       },
-      { property: "og:title", content: "Catálogo Digital" },
+      { property: "og:title", content: "TudoTop&LarTech" },
       { property: "og:description", content: "Vitrine de produtos com carrinho online." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -88,9 +89,14 @@ function Index() {
         />
         <div className="container mx-auto px-4 py-16 sm:py-24 relative">
           <div className="max-w-2xl">
+            <img
+              src={logoUrl}
+              alt="TudoTop&LarTech"
+              className="h-14 sm:h-20 w-auto mb-6 drop-shadow-[0_0_28px_rgba(248,93,0,0.3)]"
+            />
             <div className="inline-flex items-center gap-2 text-xs text-primary mb-4 px-3 py-1 rounded-full border border-primary/30 bg-primary/5">
               <Sparkles className="h-3 w-3" />
-              Catálogo digital · Carrinho em segundos
+              TudoTop&LarTech · Carrinho em segundos
             </div>
             <h1 className="text-4xl sm:text-6xl font-bold tracking-tight leading-[1.05]">
               Encontre, selecione e<br />
@@ -99,7 +105,7 @@ function Index() {
               </span>
             </h1>
             <p className="mt-5 text-muted-foreground text-base sm:text-lg max-w-lg">
-              Navegue pelo catálogo, monte seu pedido e envie em poucos cliques.
+              Navegue pela loja, monte seu pedido e envie em poucos cliques.
               Respondemos no seu WhatsApp e e-mail.
             </p>
           </div>

@@ -10,9 +10,9 @@ import { businessDaysDate } from "@/lib/delivery";
 export const Route = createFileRoute("/meu-pedido")({
   head: () => ({
     meta: [
-      { title: "Consultar meu pedido — Tudo Top" },
+      { title: "Consultar meu pedido — TudoTop&LarTech" },
       { name: "description", content: "Consulte o status do seu pedido com seu nome completo e o número do pedido." },
-      { property: "og:title", content: "Consultar meu pedido — Tudo Top" },
+      { property: "og:title", content: "Consultar meu pedido — TudoTop&LarTech" },
       { property: "og:description", content: "Acompanhe pagamento e envio do seu pedido." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -102,7 +102,7 @@ function LookupPage() {
 
         <Link to="/" className="block mt-6">
           <Button variant="outline" className="w-full">
-            <ArrowLeft className="h-4 w-4 mr-2" /> Voltar ao catálogo
+            <ArrowLeft className="h-4 w-4 mr-2" /> Voltar à loja
           </Button>
         </Link>
       </div>

@@ -8,13 +8,13 @@ import { Toaster } from "sonner";
 export const Route = createFileRoute("/pedido/$id")({
   head: () => ({
     meta: [
-      { title: "Status do pedido — Tudo Top" },
+      { title: "Status do pedido — TudoTop&LarTech" },
       {
         name: "description",
         content:
-          "Acompanhe a confirmação do pagamento do seu pedido no catálogo Tudo Top.",
+          "Acompanhe a confirmação do pagamento do seu pedido na TudoTop&LarTech.",
       },
-      { property: "og:title", content: "Status do pedido — Tudo Top" },
+      { property: "og:title", content: "Status do pedido — TudoTop&LarTech" },
       {
         property: "og:description",
         content: "Acompanhe a confirmação do pagamento do seu pedido.",
@@ -54,7 +54,7 @@ const LABELS: Record<string, { title: string; text: string; tone: string }> = {
   },
   cancelado: {
     title: "Pagamento cancelado",
-    text: "O pagamento foi cancelado. Se quiser, refaça o pedido no catálogo.",
+    text: "O pagamento foi cancelado. Se quiser, refaça o pedido na loja.",
     tone: "bad",
   },
   devolvido: { title: "Pagamento devolvido", text: "O valor foi devolvido.", tone: "bad" },
@@ -141,7 +141,7 @@ function OrderStatusPage() {
 
         <Link to="/" className="block mt-6">
           <Button variant="outline" className="w-full">
-            <ArrowLeft className="h-4 w-4 mr-2" /> Voltar ao catálogo
+            <ArrowLeft className="h-4 w-4 mr-2" /> Voltar à loja
           </Button>
         </Link>
       </div>

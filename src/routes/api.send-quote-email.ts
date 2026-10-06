@@ -7,7 +7,7 @@
 //   SMTP_SECURE     "true" para porta 465, "false" para 587
 //   SMTP_USER       usuário SMTP (geralmente o e-mail)
 //   SMTP_PASS       senha SMTP ou app password
-//   SMTP_FROM       remetente, ex: "Catálogo <noreply@seudominio.com>"
+//   SMTP_FROM       remetente, ex: "TudoTop&LarTech <noreply@seudominio.com>"
 //   ADMIN_EMAIL     e-mail que receberá notificação de novos carrinhos
 import { createFileRoute } from "@tanstack/react-router";
 import { createClient } from "@supabase/supabase-js";
@@ -96,7 +96,7 @@ export const Route = createFileRoute("/api/send-quote-email")({
           const SMTP_USER = process.env.SMTP_USER;
           const SMTP_PASS = process.env.SMTP_PASS;
           const SMTP_FROM =
-            process.env.SMTP_FROM ?? `Catálogo <${SMTP_USER ?? "noreply@example.com"}>`;
+            process.env.SMTP_FROM ?? `TudoTop&LarTech <${SMTP_USER ?? "noreply@example.com"}>`;
           const ADMIN_EMAIL = process.env.ADMIN_EMAIL ?? "leandro_cjc@hotmail.com";
 
           if (!SMTP_HOST || !SMTP_USER || !SMTP_PASS) {

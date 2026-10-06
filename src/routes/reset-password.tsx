@@ -11,9 +11,9 @@ import { ArrowLeft } from "lucide-react";
 export const Route = createFileRoute("/reset-password")({
   head: () => ({
     meta: [
-      { title: "Nova senha — Catálogo" },
+      { title: "Nova senha — TudoTop&LarTech" },
       { name: "description", content: "Defina uma nova senha para o painel administrativo." },
-      { property: "og:title", content: "Nova senha — Catálogo" },
+      { property: "og:title", content: "Nova senha — TudoTop&LarTech" },
       { property: "og:description", content: "Defina uma nova senha para o painel administrativo." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
