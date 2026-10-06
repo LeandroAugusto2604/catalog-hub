@@ -3,6 +3,7 @@ import { ShoppingCart, PackageSearch } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/lib/cart";
 import { Badge } from "@/components/ui/badge";
+import logoUrl from "@/assets/logo-tudotop.png";
 
 interface Props {
   onOpenCart: () => void;
@@ -14,13 +15,12 @@ export function SiteHeader({ onOpenCart }: Props) {
   return (
     <header className="sticky top-0 z-40 backdrop-blur-xl bg-background/70 border-b border-border">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-2 group">
-          <div className="h-9 w-9 rounded-xl btn-glow flex items-center justify-center font-bold text-lg">
-            C
-          </div>
-          <span className="font-semibold tracking-tight text-lg">
-            Catálogo<span className="text-primary">.</span>
-          </span>
+        <Link to="/" className="flex items-center group" aria-label="TudoTop&LarTech — página inicial">
+          <img
+            src={logoUrl}
+            alt="TudoTop&LarTech"
+            className="h-9 sm:h-11 w-auto drop-shadow-[0_0_18px_rgba(248,93,0,0.25)] transition-opacity group-hover:opacity-90"
+          />
         </Link>
 
         <div className="flex items-center gap-2">
