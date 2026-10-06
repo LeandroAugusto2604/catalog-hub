@@ -10,6 +10,7 @@ export interface ProductCardData {
   name: string;
   description: string | null;
   price: number;
+  price_tiers?: unknown;
   image_url: string | null;
   image_urls?: string[] | null;
   video_url?: string | null;
@@ -125,8 +126,15 @@ export function ProductCard({ product }: { product: ProductCardData }) {
           <p className="text-sm text-muted-foreground line-clamp-2">{product.description}</p>
         )}
         <div className="mt-auto pt-3 flex items-center justify-between gap-2">
-          <span className="text-lg font-semibold text-primary">
-            {formatBRL(Number(product.price))}
+          <span className="flex flex-col">
+            <span className="text-lg font-semibold text-primary">
+              {formatBRL(Number(product.price))}
+            </span>
+            {normalizeTiers(product.price_tiers).length > 0 && (
+              <span className="text-[11px] text-muted-foreground">
+                Desconto levando mais unidades
+              </span>
+            )}
           </span>
           <Button
             size="sm"
@@ -137,6 +145,7 @@ export function ProductCard({ product }: { product: ProductCardData }) {
                 name: product.name,
                 price: Number(product.price),
                 image_url: cover ?? null,
+                price_tiers: normalizeTiers(product.price_tiers),
               });
               toast.success("Adicionado ao carrinho");
             }}
