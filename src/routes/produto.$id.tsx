@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { normalizeTiers } from "@/lib/pricing";
+import { normalizeTiers, unitPriceFor } from "@/lib/pricing";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ArrowLeft, Play, Plus, X, ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowLeft, Play, Plus, Minus, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -53,6 +53,7 @@ function ProductPage() {
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [active, setActive] = useState(0);
+  const [qty, setQty] = useState(1);
   const [zoom, setZoom] = useState(false);
   const [lens, setLens] = useState<{ x: number; y: number } | null>(null);
   const [lightbox, setLightbox] = useState(false);
@@ -255,31 +256,83 @@ function ProductPage() {
           {/* Informações */}
           <aside className="order-3 lg:sticky lg:top-24 self-start w-full">
             <h1 className="text-2xl font-semibold leading-tight">{product.name}</h1>
-            <p className="mt-4 text-3xl font-bold text-primary">
-              {formatBRL(Number(product.price))}
-            </p>
-            {normalizeTiers(product.price_tiers).length > 0 && (
-              <div className="mt-3 rounded-lg border border-primary/30 bg-primary/5 p-3 text-sm space-y-1">
-                <p className="font-semibold text-primary">Leve mais, pague menos</p>
-                {normalizeTiers(product.price_tiers).map((t) => (
-                  <p key={t.min_qty} className="text-muted-foreground">
-                    A partir de {t.min_qty} un.:{" "}
-                    <span className="font-semibold text-foreground">{formatBRL(t.price)}</span> cada
+            {(() => {
+              const tiers = normalizeTiers(product.price_tiers);
+              const unit = unitPriceFor(Number(product.price), tiers, qty);
+              const base = Number(product.price);
+              return (
+                <>
+                  <p className="mt-4 text-3xl font-bold text-primary">
+                    {formatBRL(unit)}
+                    {unit < base && (
+                      <span className="ml-2 text-base font-normal text-muted-foreground line-through">
+                        {formatBRL(base)}
+                      </span>
+                    )}
                   </p>
-                ))}
-              </div>
-            )}
+                  {tiers.length > 0 && (
+                    <div className="mt-3 rounded-lg border border-primary/30 bg-primary/5 p-3 text-sm space-y-1">
+                      <p className="font-semibold text-primary">
+                        Leve mais, pague menos! Há desconto levando mais de 1 unidade ou acima de 5.
+                      </p>
+                      {tiers.map((t) => (
+                        <p key={t.min_qty} className="text-muted-foreground">
+                          A partir de {t.min_qty} un.:{" "}
+                          <span className="font-semibold text-foreground">{formatBRL(t.price)}</span> cada
+                        </p>
+                      ))}
+                    </div>
+                  )}
+                  <div className="mt-4 flex items-center gap-3">
+                    <span className="text-sm text-muted-foreground">Quantidade</span>
+                    <div className="flex items-center rounded-lg border border-border">
+                      <button
+                        type="button"
+                        aria-label="Diminuir"
+                        className="h-10 w-10 flex items-center justify-center hover:text-primary"
+                        onClick={() => setQty((q) => Math.max(1, q - 1))}
+                      >
+                        <Minus className="h-4 w-4" />
+                      </button>
+                      <input
+                        type="number"
+                        min={1}
+                        value={qty}
+                        onChange={(e) => setQty(Math.max(1, Math.floor(Number(e.target.value) || 1)))}
+                        className="h-10 w-14 bg-transparent text-center outline-none"
+                      />
+                      <button
+                        type="button"
+                        aria-label="Aumentar"
+                        className="h-10 w-10 flex items-center justify-center hover:text-primary"
+                        onClick={() => setQty((q) => q + 1)}
+                      >
+                        <Plus className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </div>
+                  {qty > 1 && (
+                    <p className="mt-2 text-sm text-muted-foreground">
+                      Total: <span className="font-semibold text-foreground">{formatBRL(unit * qty)}</span>
+                    </p>
+                  )}
+                </>
+              );
+            })()}
             <Button
               className="btn-glow border-0 w-full mt-5 h-11"
               onClick={() => {
-                add({
-                  id: product.id,
-                  name: product.name,
-                  price: Number(product.price),
-                  image_url: cover,
-                  price_tiers: normalizeTiers(product.price_tiers),
-                });
-                toast.success("Adicionado ao carrinho");
+                add(
+                  {
+                    id: product.id,
+                    name: product.name,
+                    price: Number(product.price),
+                    image_url: cover,
+                    price_tiers: normalizeTiers(product.price_tiers),
+                  },
+                  qty,
+                );
+                toast.success(`${qty} un. adicionada(s) ao carrinho`);
               }}
             >
               <Plus className="h-4 w-4 mr-2" />
