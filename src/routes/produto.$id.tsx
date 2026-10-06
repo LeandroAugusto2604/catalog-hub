@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { normalizeTiers } from "@/lib/pricing";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ArrowLeft, Play, Plus, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -37,6 +38,7 @@ interface Product {
   name: string;
   description: string | null;
   price: number;
+  price_tiers?: unknown;
   image_url: string | null;
   image_urls: string[] | null;
   video_url: string | null;
@@ -61,7 +63,7 @@ function ProductPage() {
       setLoading(true);
       const { data } = await supabase
         .from("products")
-        .select("id,name,description,price,image_url,image_urls,video_url")
+        .select("id,name,description,price,price_tiers,image_url,image_urls,video_url")
         .eq("id", id)
         .eq("active", true)
         .maybeSingle();
@@ -256,6 +258,17 @@ function ProductPage() {
             <p className="mt-4 text-3xl font-bold text-primary">
               {formatBRL(Number(product.price))}
             </p>
+            {normalizeTiers(product.price_tiers).length > 0 && (
+              <div className="mt-3 rounded-lg border border-primary/30 bg-primary/5 p-3 text-sm space-y-1">
+                <p className="font-semibold text-primary">Leve mais, pague menos</p>
+                {normalizeTiers(product.price_tiers).map((t) => (
+                  <p key={t.min_qty} className="text-muted-foreground">
+                    A partir de {t.min_qty} un.:{" "}
+                    <span className="font-semibold text-foreground">{formatBRL(t.price)}</span> cada
+                  </p>
+                ))}
+              </div>
+            )}
             <Button
               className="btn-glow border-0 w-full mt-5 h-11"
               onClick={() => {
@@ -264,6 +277,7 @@ function ProductPage() {
                   name: product.name,
                   price: Number(product.price),
                   image_url: cover,
+                  price_tiers: normalizeTiers(product.price_tiers),
                 });
                 toast.success("Adicionado ao carrinho");
               }}

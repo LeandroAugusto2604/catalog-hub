@@ -9,6 +9,7 @@ import nodemailer from "nodemailer";
 import { z } from "zod";
 import { quoteShipping } from "@/lib/shipping.server";
 import { businessDaysDate } from "@/lib/delivery";
+import { unitPriceFor } from "@/lib/pricing";
 import { getPublicSupabase } from "@/lib/supabase-public.server";
 
 const bodySchema = z.object({
@@ -72,7 +73,7 @@ export const Route = createFileRoute("/api/create-payment")({
           const ids = [...new Set(data.items.map((i) => i.product_id))];
           const { data: products, error: productsError } = await supabase
             .from("products")
-            .select("id, name, price")
+            .select("id, name, price, price_tiers")
             .in("id", ids)
             .eq("active", true);
           if (productsError) throw productsError;
@@ -90,7 +91,7 @@ export const Route = createFileRoute("/api/create-payment")({
               return {
                 product_id: p.id as string,
                 product_name: p.name as string,
-                unit_price: Number(p.price),
+                unit_price: unitPriceFor(Number(p.price), (p as any).price_tiers, i.quantity),
                 quantity: i.quantity,
               };
             })

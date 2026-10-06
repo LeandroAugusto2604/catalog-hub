@@ -14,7 +14,7 @@ import {
   FileText,
   Loader2,
 } from "lucide-react";
-import { useCart, formatBRL } from "@/lib/cart";
+import { useCart, formatBRL, itemUnitPrice } from "@/lib/cart";
 import { toast } from "sonner";
 import { ShippingCalculator, type ShippingOption } from "@/components/ShippingCalculator";
 import { z } from "zod";
@@ -54,7 +54,7 @@ export function CartSheet({ open, onOpenChange }: Props) {
   const setQty = useCart((s) => s.setQty);
   const remove = useCart((s) => s.remove);
   const clear = useCart((s) => s.clear);
-  const total = useCart((s) => s.items.reduce((a, i) => a + i.price * i.quantity, 0));
+  const total = useCart((s) => s.items.reduce((a, i) => a + itemUnitPrice(i) * i.quantity, 0));
 
   const [mode, setMode] = useState<"buy" | "quote">("buy");
   const [form, setForm] = useState({ customer_name: "", whatsapp: "", email: "", notes: "", cpf: "" });
@@ -116,7 +116,7 @@ export function CartSheet({ open, onOpenChange }: Props) {
           items: items.map((i) => ({
             product_id: i.id,
             product_name: i.name,
-            unit_price: i.price,
+            unit_price: itemUnitPrice(i),
             quantity: i.quantity,
           })),
         }),
@@ -222,7 +222,12 @@ export function CartSheet({ open, onOpenChange }: Props) {
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium line-clamp-1">{i.name}</p>
                   <p className="text-xs text-primary font-semibold mt-0.5">
-                    {formatBRL(i.price)}
+                    {itemUnitPrice(i) < i.price && (
+                      <span className="line-through text-muted-foreground font-normal mr-1">
+                        {formatBRL(i.price)}
+                      </span>
+                    )}
+                    {formatBRL(itemUnitPrice(i))} /un.
                   </p>
                   <div className="flex items-center gap-1 mt-2">
                     <Button
@@ -496,7 +501,7 @@ export function CartSheet({ open, onOpenChange }: Props) {
               onClick={() => {
                 const parsed = formSchema.safeParse(form);
                 const lines = items.map(
-                  (i) => `• ${i.name} — ${i.quantity}x ${formatBRL(i.price)} = ${formatBRL(i.price * i.quantity)}`
+                  (i) => `• ${i.name} — ${i.quantity}x ${formatBRL(itemUnitPrice(i))} = ${formatBRL(itemUnitPrice(i) * i.quantity)}`
                 );
                 const header = `Olá! Gostaria de enviar meu carrinho:`;
                 const customer = parsed.success
