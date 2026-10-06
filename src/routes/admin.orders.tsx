@@ -17,9 +17,9 @@ export const Route = createFileRoute("/admin/orders")({
   head: () => ({
     meta: [
       { title: "Pedidos pagos — Admin Tudo Top" },
-      { name: "description", content: "Acompanhe compras pagas, pendentes e entregas do catálogo Tudo Top." },
+      { name: "description", content: "Acompanhe compras pagas, pendentes e entregas da TudoTop&LarTech." },
       { property: "og:title", content: "Pedidos pagos — Admin Tudo Top" },
-      { property: "og:description", content: "Acompanhe compras pagas, pendentes e entregas do catálogo Tudo Top." },
+      { property: "og:description", content: "Acompanhe compras pagas, pendentes e entregas da TudoTop&LarTech." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex" },

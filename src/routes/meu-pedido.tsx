@@ -102,7 +102,7 @@ function LookupPage() {
 
         <Link to="/" className="block mt-6">
           <Button variant="outline" className="w-full">
-            <ArrowLeft className="h-4 w-4 mr-2" /> Voltar ao catálogo
+            <ArrowLeft className="h-4 w-4 mr-2" /> Voltar à loja
           </Button>
         </Link>
       </div>

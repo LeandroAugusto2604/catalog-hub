@@ -144,7 +144,7 @@ export const Route = createFileRoute("/api/public/mercadopago-webhook")({
                 auth: { user: SMTP_USER, pass: SMTP_PASS },
               });
               const SMTP_FROM =
-                process.env.SMTP_FROM ?? `Catálogo <${SMTP_USER}>`;
+                process.env.SMTP_FROM ?? `TudoTop&LarTech <${SMTP_USER}>`;
               const wrap = (inner: string) =>
                 `<div style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto;padding:24px;background:#fff;color:#111">${inner}</div>`;
 

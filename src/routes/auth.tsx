@@ -12,10 +12,10 @@ import { ArrowLeft } from "lucide-react";
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
-      { title: "Acesso Admin — Tudo Top" },
-      { name: "description", content: "Entre no painel privado do catálogo Tudo Top." },
-      { property: "og:title", content: "Acesso Admin — Tudo Top" },
-      { property: "og:description", content: "Entre no painel privado do catálogo Tudo Top." },
+      { title: "Acesso Admin — TudoTop&LarTech" },
+      { name: "description", content: "Entre no painel privado da TudoTop&LarTech." },
+      { property: "og:title", content: "Acesso Admin — TudoTop&LarTech" },
+      { property: "og:description", content: "Entre no painel privado da TudoTop&LarTech." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex" },
@@ -69,7 +69,7 @@ function Auth() {
         style={{ background: "var(--gradient-radial-glow)" }}
       />
       <Link to="/" className="absolute top-6 left-6 text-sm text-muted-foreground hover:text-foreground inline-flex items-center gap-2">
-        <ArrowLeft className="h-4 w-4" /> Voltar ao catálogo
+        <ArrowLeft className="h-4 w-4" /> Voltar à loja
       </Link>
       <Card className="w-full max-w-md p-8 card-elevated relative">
         <div className="text-center mb-6">

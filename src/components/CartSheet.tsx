@@ -209,7 +209,7 @@ export function CartSheet({ open, onOpenChange }: Props) {
         <div className="flex-1 overflow-y-auto p-6 space-y-3">
           {items.length === 0 ? (
             <div className="text-center py-12 text-muted-foreground text-sm">
-              Carrinho vazio. Adicione produtos do catálogo.
+              Carrinho vazio. Adicione produtos da loja.
             </div>
           ) : (
             items.map((i) => (

@@ -227,7 +227,7 @@ export const Route = createFileRoute("/api/create-payment")({
                 secure: process.env.SMTP_SECURE === "true" || Number(process.env.SMTP_PORT ?? 587) === 465,
                 auth: { user: SMTP_USER, pass: SMTP_PASS },
               });
-              const SMTP_FROM = process.env.SMTP_FROM ?? `Catálogo <${SMTP_USER}>`;
+              const SMTP_FROM = process.env.SMTP_FROM ?? `TudoTop&LarTech <${SMTP_USER}>`;
               const ADMIN_EMAIL =
                 process.env.ADMIN_EMAIL ?? "leandro_cjc@hotmail.com";
 

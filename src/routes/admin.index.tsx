@@ -38,10 +38,10 @@ import { formatBRL } from "@/lib/cart";
 export const Route = createFileRoute("/admin/")({
   head: () => ({
     meta: [
-      { title: "Produtos — Admin Tudo Top" },
-      { name: "description", content: "Organize e atualize os produtos do catálogo Tudo Top." },
-      { property: "og:title", content: "Produtos — Admin Tudo Top" },
-      { property: "og:description", content: "Organize e atualize os produtos do catálogo Tudo Top." },
+      { title: "Produtos — Admin TudoTop&LarTech" },
+      { name: "description", content: "Organize e atualize os produtos da TudoTop&LarTech." },
+      { property: "og:title", content: "Produtos — Admin TudoTop&LarTech" },
+      { property: "og:description", content: "Organize e atualize os produtos da TudoTop&LarTech." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex" },
@@ -333,7 +333,7 @@ function ProductsAdmin() {
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
           <h1 className="text-2xl font-bold">Produtos</h1>
-          <p className="text-sm text-muted-foreground">Gerencie o catálogo</p>
+          <p className="text-sm text-muted-foreground">Gerencie a loja</p>
         </div>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
@@ -552,7 +552,7 @@ function ProductsAdmin() {
               </div>
               <div className="flex items-center justify-between rounded-lg border border-border p-3">
                 <div>
-                  <p className="text-sm font-medium">Ativo no catálogo</p>
+                  <p className="text-sm font-medium">Ativo na loja</p>
                   <p className="text-xs text-muted-foreground">Visível para clientes</p>
                 </div>
                 <Switch

@@ -15,13 +15,13 @@ import { Toaster, toast } from "sonner";
 export const Route = createFileRoute("/produto/$id")({
   head: () => ({
     meta: [
-      { title: "Produto — Catálogo Digital" },
+      { title: "Produto — TudoTop&LarTech" },
       {
         name: "description",
         content:
           "Veja fotos e vídeo do produto em detalhes e adicione ao seu carrinho em poucos cliques.",
       },
-      { property: "og:title", content: "Produto — Catálogo Digital" },
+      { property: "og:title", content: "Produto — TudoTop&LarTech" },
       {
         property: "og:description",
         content: "Fotos, vídeo e detalhes do produto. Monte seu carrinho online.",
@@ -123,7 +123,7 @@ function ProductPage() {
         <div className="container mx-auto px-4 py-24 text-center">
           <h1 className="text-2xl font-semibold">Produto não encontrado</h1>
           <Link to="/" className="inline-block mt-6">
-            <Button className="btn-glow border-0">Voltar ao catálogo</Button>
+            <Button className="btn-glow border-0">Voltar à loja</Button>
           </Link>
         </div>
       </div>
@@ -144,7 +144,7 @@ function ProductPage() {
           className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition"
         >
           <ArrowLeft className="h-4 w-4" />
-          Voltar ao catálogo
+          Voltar à loja
         </Link>
       </div>
 
