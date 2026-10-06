@@ -39,7 +39,7 @@ interface OrderStatus {
 const LABELS: Record<string, { title: string; text: string; tone: string }> = {
   pago: {
     title: "Pagamento confirmado!",
-    text: "Recebemos seu pagamento. Vamos entrar em contato pelo WhatsApp para combinar a entrega.",
+    text: "Recebemos seu pagamento e enviaremos a confirmação por e-mail. Vamos entrar em contato pelo WhatsApp para combinar a entrega.",
     tone: "ok",
   },
   pendente: {
@@ -136,6 +136,15 @@ function OrderStatusPage() {
             <p className="text-xs text-muted-foreground mt-3">
               Guarde este número. Você pode consultar o pedido depois em "Meu pedido", com seu nome completo e o número.
             </p>
+            {(info!.tone === "ok" || info!.tone === "wait") && (
+              <p className="mt-3 flex items-start gap-2 rounded-lg border border-primary/25 bg-primary/5 p-3 text-left text-xs text-muted-foreground">
+                <Mail className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                <span>
+                  Você receberá um <strong className="text-foreground">e-mail de confirmação do pedido</strong>.
+                  Se não encontrar na caixa de entrada, procure na caixa de <strong className="text-foreground">spam</strong>.
+                </span>
+              </p>
+            )}
           </>
         )}
 
