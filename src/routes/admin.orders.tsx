@@ -16,9 +16,9 @@ import { formatBRL } from "@/lib/cart";
 export const Route = createFileRoute("/admin/orders")({
   head: () => ({
     meta: [
-      { title: "Pedidos pagos — Admin Tudo Top" },
+      { title: "Pedidos pagos — Admin TudoTop&LarTech" },
       { name: "description", content: "Acompanhe compras pagas, pendentes e entregas da TudoTop&LarTech." },
-      { property: "og:title", content: "Pedidos pagos — Admin Tudo Top" },
+      { property: "og:title", content: "Pedidos pagos — Admin TudoTop&LarTech" },
       { property: "og:description", content: "Acompanhe compras pagas, pendentes e entregas da TudoTop&LarTech." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

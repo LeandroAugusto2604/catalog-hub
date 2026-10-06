@@ -16,10 +16,10 @@ import { formatBRL } from "@/lib/cart";
 export const Route = createFileRoute("/admin/quotes")({
   head: () => ({
     meta: [
-      { title: "Pedidos do carrinho — Admin Tudo Top" },
-      { name: "description", content: "Veja e responda os carrinhos enviados pelos clientes da Tudo Top." },
-      { property: "og:title", content: "Pedidos do carrinho — Admin Tudo Top" },
-      { property: "og:description", content: "Veja e responda os carrinhos enviados pelos clientes da Tudo Top." },
+      { title: "Pedidos do carrinho — Admin TudoTop&LarTech" },
+      { name: "description", content: "Veja e responda os carrinhos enviados pelos clientes da TudoTop&LarTech." },
+      { property: "og:title", content: "Pedidos do carrinho — Admin TudoTop&LarTech" },
+      { property: "og:description", content: "Veja e responda os carrinhos enviados pelos clientes da TudoTop&LarTech." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex" },

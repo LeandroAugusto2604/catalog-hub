@@ -7,7 +7,7 @@
 //   SMTP_SECURE     "true" para porta 465, "false" para 587
 //   SMTP_USER       usuário SMTP (geralmente o e-mail)
 //   SMTP_PASS       senha SMTP ou app password
-//   SMTP_FROM       remetente, ex: "Catálogo <noreply@seudominio.com>"
+//   SMTP_FROM       remetente, ex: "TudoTop&LarTech <noreply@seudominio.com>"
 //   ADMIN_EMAIL     e-mail que receberá notificação de novos carrinhos
 import { createFileRoute } from "@tanstack/react-router";
 import { createClient } from "@supabase/supabase-js";

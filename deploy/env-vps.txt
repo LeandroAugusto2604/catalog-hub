@@ -29,7 +29,7 @@ SMTP_PORT="465"
 SMTP_SECURE="true"
 SMTP_USER="loja@dev-prod.cloud"
 SMTP_PASS="Vivo@2026*"
-SMTP_FROM="Tudo Top <loja@dev-prod.cloud>"
+SMTP_FROM="TudoTop&LarTech <loja@dev-prod.cloud>"
 
 # ---- Pagamento online (Mercado Pago: Pix + cartão) ----
 # Cole aqui as credenciais da sua conta Mercado Pago

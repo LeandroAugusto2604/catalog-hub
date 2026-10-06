@@ -105,7 +105,7 @@ function Index() {
               </span>
             </h1>
             <p className="mt-5 text-muted-foreground text-base sm:text-lg max-w-lg">
-              Navegue pelo catálogo, monte seu pedido e envie em poucos cliques.
+              Navegue pela loja, monte seu pedido e envie em poucos cliques.
               Respondemos no seu WhatsApp e e-mail.
             </p>
           </div>

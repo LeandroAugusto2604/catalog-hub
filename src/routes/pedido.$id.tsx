@@ -8,13 +8,13 @@ import { Toaster } from "sonner";
 export const Route = createFileRoute("/pedido/$id")({
   head: () => ({
     meta: [
-      { title: "Status do pedido — Tudo Top" },
+      { title: "Status do pedido — TudoTop&LarTech" },
       {
         name: "description",
         content:
           "Acompanhe a confirmação do pagamento do seu pedido na TudoTop&LarTech.",
       },
-      { property: "og:title", content: "Status do pedido — Tudo Top" },
+      { property: "og:title", content: "Status do pedido — TudoTop&LarTech" },
       {
         property: "og:description",
         content: "Acompanhe a confirmação do pagamento do seu pedido.",
