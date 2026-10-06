@@ -198,6 +198,7 @@ export type Database = {
           length_cm: number
           name: string
           price: number
+          price_tiers: Json
           sort_order: number
           updated_at: string
           video_url: string | null
@@ -216,6 +217,7 @@ export type Database = {
           length_cm?: number
           name: string
           price?: number
+          price_tiers?: Json
           sort_order?: number
           updated_at?: string
           video_url?: string | null
@@ -234,6 +236,7 @@ export type Database = {
           length_cm?: number
           name?: string
           price?: number
+          price_tiers?: Json
           sort_order?: number
           updated_at?: string
           video_url?: string | null
